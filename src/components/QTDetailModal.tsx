@@ -59,7 +59,9 @@ export default function QTDetailModal({ isOpen, onClose, log, content, onDeleteR
                             )}
                         </div>
                     )}
-                    <p className="text-gray-700 leading-8 whitespace-pre-wrap text-lg">{content}</p>
+                    <div className="prose prose-amber max-w-none whitespace-pre-wrap text-gray-700 leading-loose text-lg font-light break-words">
+                        {content}
+                    </div>
 
                     {log.bible_verse && (
                         <div className="mt-10 pt-6 border-t border-gray-100 flex items-start text-sm text-gray-500 italic">
