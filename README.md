@@ -33,4 +33,15 @@
    npm run dev
    ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 배포 방법 (Deployment)
+
+이 프로젝트는 **Vercel**을 통해 무료로 쉽게 배포할 수 있습니다.
+
+1. [Vercel](https://vercel.com)에 로그인 (GitHub 계정 연동 추천)
+2. **Add New...** > **Project** 클릭
+3. **Import Git Repository**에서 방금 올린 `QTtogether` 저장소 선택 (`Import` 버튼 클릭)
+4. **Environment Variables** 설정 섹션을 펼치고 아래 두 값을 입력:
+   - `NEXT_PUBLIC_SUPABASE_URL`: (Supabase 대시보드에서 복사)
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: (Supabase 대시보드에서 복사)
+5. **Deploy** 버튼 클릭
+6. 1~2분 후 배포 완료! 생성된 URL로 접속하여 확인.
