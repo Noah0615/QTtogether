@@ -1,5 +1,5 @@
 'use client';
-import { X, Trash2, Edit2 } from 'lucide-react';
+import { X, Trash2, Edit2, ExternalLink } from 'lucide-react';
 import { QTLog } from '@/lib/supabase';
 
 interface QTDetailModalProps {
@@ -34,14 +34,26 @@ export default function QTDetailModal({ isOpen, onClose, log, content, onDeleteR
                     {log.media_url && (
                         <div className="mb-6 rounded-xl overflow-hidden shadow-sm bg-gray-50 border border-gray-100">
                             {log.media_url.includes('youtube') || log.media_url.includes('youtu.be') ? (
-                                <iframe
-                                    className="w-full aspect-video"
-                                    src={`https://www.youtube.com/embed/${log.media_url.split('v=')[1]?.split('&')[0] || log.media_url.split('/').pop()}`}
-                                    title="YouTube video player"
-                                    frameBorder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                    allowFullScreen
-                                ></iframe>
+                                <a
+                                    href={log.media_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block relative group"
+                                >
+                                    <img
+                                        src={`https://img.youtube.com/vi/${log.media_url.split('v=')[1]?.split('&')[0] || log.media_url.split('/').pop()}/0.jpg`}
+                                        alt="YouTube Thumbnail"
+                                        className="w-full aspect-video object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                                        <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                            <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[18px] border-l-white border-b-[10px] border-b-transparent ml-1"></div>
+                                        </div>
+                                    </div>
+                                    <div className="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-3 py-1.5 rounded-full flex items-center backdrop-blur-md">
+                                        YouTube에서 보기 <ExternalLink size={12} className="ml-1.5" />
+                                    </div>
+                                </a>
                             ) : (
                                 <img src={log.media_url} alt="Attached" className="w-full h-auto object-contain" />
                             )}
