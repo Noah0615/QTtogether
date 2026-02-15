@@ -1,24 +1,31 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { X, Check } from 'lucide-react';
+import { X, Check, Image as ImageIcon, Link as LinkIcon, Upload } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { QTLog } from '@/lib/supabase';
+import { QTLog, supabase } from '@/lib/supabase';
 
 interface WriteModalProps {
     isOpen: boolean;
     onClose: () => void;
-    verse: string; // "Reference - Verse text"
+    verse: string;
     onSuccess: () => void;
-    initialData?: QTLog; // If editing
-    initialContent?: string; // Decrypted content if private
+    initialData?: QTLog;
+    initialContent?: string;
 }
 
 export default function WriteModal({ isOpen, onClose, verse, onSuccess, initialData, initialContent }: WriteModalProps) {
     const [nickname, setNickname] = useState('');
     const [password, setPassword] = useState('');
-    const [userVerse, setUserVerse] = useState(''); // User's custom verse input
+    const [userVerse, setUserVerse] = useState('');
     const [content, setContent] = useState('');
     const [isPublic, setIsPublic] = useState(true);
+
+    // Media State
+    const [mediaType, setMediaType] = useState<'none' | 'image' | 'youtube'>('none');
+    const [mediaUrl, setMediaUrl] = useState(''); // Stores final URL (or YouTube input)
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
@@ -29,16 +36,65 @@ export default function WriteModal({ isOpen, onClose, verse, onSuccess, initialD
                 setUserVerse(initialData.bible_verse || '');
                 setContent(initialContent || initialData.content);
                 setIsPublic(initialData.is_public);
-                // Password intentionally left blank for verification
+
+                if (initialData.media_url) {
+                    setMediaUrl(initialData.media_url);
+                    if (initialData.media_url.includes('youtube') || initialData.media_url.includes('youtu.be')) {
+                        setMediaType('youtube');
+                    } else {
+                        setMediaType('image');
+                        setPreviewUrl(initialData.media_url);
+                    }
+                } else {
+                    setMediaType('none');
+                    setMediaUrl('');
+                    setPreviewUrl(null);
+                }
             } else {
                 setNickname('');
                 setPassword('');
-                setUserVerse(''); // Empty for new entry
+                setUserVerse('');
                 setContent('');
                 setIsPublic(true);
+                setMediaType('none');
+                setMediaUrl('');
+                setPreviewUrl(null);
+                setSelectedFile(null);
             }
         }
     }, [isOpen, initialData, initialContent]);
+
+    // Handle File Selection (for Image)
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setSelectedFile(file);
+            setMediaUrl(''); // Clear URL if file selected
+            const objectUrl = URL.createObjectURL(file);
+            setPreviewUrl(objectUrl);
+        }
+    };
+
+    // Helper: Upload File to Supabase Storage
+    const uploadFile = async (file: File): Promise<string> => {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+            .from('qt_uploads')
+            .upload(filePath, file);
+
+        if (uploadError) {
+            throw uploadError;
+        }
+
+        const { data } = supabase.storage
+            .from('qt_uploads')
+            .getPublicUrl(filePath);
+
+        return data.publicUrl;
+    };
 
     if (!isOpen) return null;
 
@@ -48,6 +104,15 @@ export default function WriteModal({ isOpen, onClose, verse, onSuccess, initialD
         setLoading(true);
 
         try {
+            let finalMediaUrl = mediaUrl;
+
+            // Upload Image if file selected
+            if (mediaType === 'image' && selectedFile) {
+                finalMediaUrl = await uploadFile(selectedFile);
+            } else if (mediaType === 'none') {
+                finalMediaUrl = '';
+            }
+
             const url = initialData ? `/api/qt/${initialData.id}` : '/api/qt';
             const method = initialData ? 'PUT' : 'POST';
 
@@ -61,9 +126,8 @@ export default function WriteModal({ isOpen, onClose, verse, onSuccess, initialD
                     password,
                     content,
                     is_public: isPublic,
-                    bible_verse: userVerse || verse, // Fallback to daily verse only if empty? Or just userVerse? Let's use userVerse. User asked for input. If empty, maybe save empty? Or save Today's Word? Let's save userVerse.
-                    // Actually, if user leaves it empty, maybe fallback to Today's word?
-                    // User said "allow input". I'll default to empty.
+                    bible_verse: userVerse || verse,
+                    media_url: finalMediaUrl,
                 }),
             });
 
@@ -72,11 +136,19 @@ export default function WriteModal({ isOpen, onClose, verse, onSuccess, initialD
                 throw new Error(errorData.error || 'Failed to save');
             }
 
+            // Cleanup
+            if (previewUrl && !initialData?.media_url) URL.revokeObjectURL(previewUrl);
+
             setNickname('');
             setPassword('');
             setUserVerse('');
             setContent('');
             setIsPublic(true);
+            setMediaType('none');
+            setMediaUrl('');
+            setPreviewUrl(null);
+            setSelectedFile(null);
+
             onSuccess();
             onClose();
             router.refresh();
@@ -101,12 +173,12 @@ export default function WriteModal({ isOpen, onClose, verse, onSuccess, initialD
 
                 {/* Form Body */}
                 <form onSubmit={handleSubmit} className="p-6 overflow-y-auto flex-1">
-                    {/* Inspiration Verse Display - Optional helpers */}
+                    {/* Inspiration Verse Display */}
                     <div className="mb-6 text-sm text-gray-600 bg-amber-50 p-4 rounded-xl border border-amber-100 flex items-start">
                         <div className="w-1 h-10 bg-amber-400 rounded-full mr-3 shrink-0"></div>
                         <div>
                             <span className="block font-bold text-amber-800 mb-1 text-xs uppercase tracking-wider">오늘의 묵상 주제</span>
-                            {verse.split(' - ')[0]} {/* Show Reference part if possible, or full string */}
+                            {verse.split(' - ')[0]}
                         </div>
                     </div>
 
@@ -153,9 +225,70 @@ export default function WriteModal({ isOpen, onClose, verse, onSuccess, initialD
                             required
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
-                            className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl h-48 resize-none focus:bg-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all leading-relaxed"
+                            className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl h-32 resize-none focus:bg-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all leading-relaxed"
                             placeholder="오늘 받은 은혜를 나누어 주세요..."
                         />
+                    </div>
+
+                    {/* Media Attachment */}
+                    <div className="mb-6">
+                        <label className="block text-sm font-bold text-gray-700 mb-2">미디어 첨부 (선택)</label>
+                        <div className="flex gap-2 mb-3">
+                            <button
+                                type="button"
+                                onClick={() => { setMediaType('none'); setMediaUrl(''); setPreviewUrl(null); setSelectedFile(null); }}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${mediaType === 'none' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                            >
+                                없음
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setMediaType('image')}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center ${mediaType === 'image' ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                            >
+                                <ImageIcon size={14} className="mr-1.5" /> 이미지
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => { setMediaType('youtube'); setPreviewUrl(null); setSelectedFile(null); }}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center ${mediaType === 'youtube' ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                            >
+                                <LinkIcon size={14} className="mr-1.5" /> 유튜브
+                            </button>
+                        </div>
+
+                        {mediaType === 'image' && (
+                            <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-amber-300 transition-colors bg-gray-50">
+                                {previewUrl ? (
+                                    <div className="relative aspect-video rounded-lg overflow-hidden bg-black/5">
+                                        <img src={previewUrl} alt="Preview" className="w-full h-full object-contain" />
+                                        <button
+                                            type="button"
+                                            onClick={() => { setPreviewUrl(null); setSelectedFile(null); }}
+                                            className="absolute top-2 right-2 p-1 bg-black/50 text-white rounded-full hover:bg-black/70"
+                                        >
+                                            <X size={16} />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <label className="cursor-pointer block py-4">
+                                        <Upload className="mx-auto text-gray-400 mb-2" size={24} />
+                                        <span className="text-sm text-gray-500">클릭하여 이미지 업로드</span>
+                                        <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                                    </label>
+                                )}
+                            </div>
+                        )}
+
+                        {mediaType === 'youtube' && (
+                            <input
+                                type="text"
+                                value={mediaUrl}
+                                onChange={(e) => setMediaUrl(e.target.value)}
+                                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all placeholder-gray-400"
+                                placeholder="YouTube 영상 링크를 입력하세요 (예: https://youtu.be/...)"
+                            />
+                        )}
                     </div>
 
                     <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">

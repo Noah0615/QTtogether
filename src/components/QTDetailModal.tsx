@@ -30,10 +30,24 @@ export default function QTDetailModal({ isOpen, onClose, log, content, onDeleteR
                     </button>
                 </div>
 
-                <div className="p-8 overflow-y-auto flex-1 bg-white">
-                    <div className="prose prose-amber max-w-none whitespace-pre-wrap text-gray-700 leading-loose text-lg font-light break-words">
-                        {content}
-                    </div>
+                <div className="flex-1 overflow-y-auto p-6 md:p-8">
+                    {log.media_url && (
+                        <div className="mb-6 rounded-xl overflow-hidden shadow-sm bg-gray-50 border border-gray-100">
+                            {log.media_url.includes('youtube') || log.media_url.includes('youtu.be') ? (
+                                <iframe
+                                    className="w-full aspect-video"
+                                    src={`https://www.youtube.com/embed/${log.media_url.split('v=')[1]?.split('&')[0] || log.media_url.split('/').pop()}`}
+                                    title="YouTube video player"
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowFullScreen
+                                ></iframe>
+                            ) : (
+                                <img src={log.media_url} alt="Attached" className="w-full h-auto object-contain" />
+                            )}
+                        </div>
+                    )}
+                    <p className="text-gray-700 leading-8 whitespace-pre-wrap text-lg">{content}</p>
 
                     {log.bible_verse && (
                         <div className="mt-10 pt-6 border-t border-gray-100 flex items-start text-sm text-gray-500 italic">

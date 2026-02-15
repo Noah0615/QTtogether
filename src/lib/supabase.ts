@@ -13,4 +13,5 @@ export interface QTLog {
   is_public: boolean;
   bible_verse: string;
   created_at: string;
+  media_url?: string;
 }

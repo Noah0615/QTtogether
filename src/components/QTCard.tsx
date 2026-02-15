@@ -30,6 +30,25 @@ export default function QTCard({ log, onClick }: QTCardProps) {
                 )}
             </div>
 
+            {log.media_url && !log.media_url.includes('youtube') && !log.media_url.includes('youtu.be') && (
+                <div className="mt-3 rounded-lg overflow-hidden h-32 w-full bg-gray-100">
+                    <img src={log.media_url} alt="Attached" className="w-full h-full object-cover" />
+                </div>
+            )}
+
+            {log.media_url && (log.media_url.includes('youtube') || log.media_url.includes('youtu.be')) && (
+                <div className="mt-3 rounded-lg overflow-hidden h-32 w-full bg-black relative flex items-center justify-center group/video">
+                    <img
+                        src={`https://img.youtube.com/vi/${log.media_url.split('v=')[1]?.split('&')[0] || log.media_url.split('/').pop()}/0.jpg`}
+                        alt="Video Thumbnail"
+                        className="w-full h-full object-cover opacity-60 group-hover/video:opacity-40 transition-opacity"
+                    />
+                    <div className="absolute w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/40">
+                        <div className="w-0 h-0 border-t-8 border-t-transparent border-l-[14px] border-l-white border-b-8 border-b-transparent ml-1"></div>
+                    </div>
+                </div>
+            )}
+
             {log.bible_verse && (
                 <div className="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-400 truncate flex items-center">
                     <div className="w-1 h-1 rounded-full bg-amber-400 mr-2" />

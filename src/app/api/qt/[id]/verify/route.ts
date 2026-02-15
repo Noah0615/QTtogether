@@ -12,7 +12,7 @@ export async function POST(
     // Fetch the record's password hash
     const { data, error } = await supabase
         .from('qt_logs')
-        .select('password, content')
+        .select('password, content, media_url')
         .eq('id', id)
         .single();
 
@@ -23,10 +23,12 @@ export async function POST(
     // Verify password
     const isValid = await bcrypt.compare(password, data.password);
 
-    if (!isValid) {
+    if (isValid) {
+        return NextResponse.json({
+            content: data.content,
+            media_url: data.media_url
+        });
+    } else {
         return NextResponse.json({ error: 'Invalid password' }, { status: 401 });
     }
-
-    // Return the content
-    return NextResponse.json({ content: data.content });
 }

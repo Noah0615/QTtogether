@@ -17,6 +17,7 @@ export async function GET() {
         ...log,
         password: null, // Never return password hash
         content: log.is_public ? log.content : '', // Clear content if private
+        media_url: log.is_public ? log.media_url : null, // Clear media if private
     }));
 
     return NextResponse.json(sanitizedData);
@@ -25,7 +26,7 @@ export async function GET() {
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { nickname, password, content, is_public, bible_verse } = body;
+        const { nickname, password, content, is_public, bible_verse, media_url } = body;
 
         // Validation
         if (!nickname || !password || !content || password.length !== 4) {
@@ -47,6 +48,7 @@ export async function POST(request: Request) {
                     content,
                     is_public,
                     bible_verse,
+                    media_url,
                 },
             ])
             .select()
