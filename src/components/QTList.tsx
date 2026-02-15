@@ -118,7 +118,7 @@ export default function QTList({ onEditLog }: QTListProps) {
             <div className="flex justify-between items-center mb-8 px-2">
                 <h3 className="text-xl font-bold text-gray-800 flex items-center tracking-tight">
                     <span className="w-2.5 h-2.5 bg-amber-500 rounded-full mr-3 shadow-sm"></span>
-                    Community Share
+                    은혜 나눔
                 </h3>
                 <button
                     onClick={fetchLogs}
