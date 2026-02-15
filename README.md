@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 함께 쓰는 익명 큐티 노트 (Anonymous QT Note)
 
-## Getting Started
+매일의 말씀을 묵상하고, 받은 은혜를 익명으로 자유롭게 나누는 웹 애플리케이션입니다.
 
-First, run the development server:
+## 주요 기능
+- **오늘의 말씀 (Today's Word)**: 매일 변경되는 성경 구절 카드
+- **익명 묵상 작성**: 닉네임 + 4자리 비밀번호로 간편하게 기록
+- **공개/비공개 설정**: 나만 보고 싶은 묵상은 비공개로 안전하게 저장 (서버에서 내용 원천 차단)
+- **비밀번호 보안**: `bcrypt` 단방향 암호화를 통한 안전한 비밀번호 저장
+- **반응형 디자인**: 모바일, 태블릿, 데스크탑 모두 최적화된 UI
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 기술 스택
+- **Framework**: Next.js 15 (App Router)
+- **Styling**: Tailwind CSS, Lucide Icons
+- **Database**: Supabase (PostgreSQL)
+- **Backend Logic**: Next.js API Routes (Server Actions like)
+
+## 실행 방법
+
+1. 의존성 설치
+   ```bash
+   npm install
+   ```
+
+2. 환경 변수 설정 (`.env.local` 파일 생성)
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+
+3. 개발 서버 실행
+   ```bash
+   npm run dev
+   ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

@@ -1,0 +1,84 @@
+'use client';
+import { useState } from 'react';
+import VerseCard from '@/components/VerseCard';
+import WriteModal from '@/components/WriteModal';
+import QTList from '@/components/QTList';
+import { PenTool } from 'lucide-react';
+import { BibleVerse } from '@/lib/getDailyVerse';
+import { QTLog } from '@/lib/supabase';
+
+interface HomeClientProps {
+    verse: BibleVerse;
+}
+
+export default function HomeClient({ verse }: HomeClientProps) {
+    const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
+    const [refreshKey, setRefreshKey] = useState(0);
+
+    // Edit State
+    const [editingLog, setEditingLog] = useState<QTLog | undefined>(undefined);
+    const [editingContent, setEditingContent] = useState<string | undefined>(undefined);
+
+    const handleEditLog = (log: QTLog, content: string) => {
+        setEditingLog(log);
+        setEditingContent(content);
+        setIsWriteModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsWriteModalOpen(false);
+        setEditingLog(undefined);
+        setEditingContent(undefined);
+    };
+
+    return (
+        <main className="min-h-screen bg-[#faf9f6] text-gray-800 relative selection:bg-amber-200 font-sans">
+            {/* Background decoration */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+                <div className="absolute top-0 right-0 w-[60vw] h-[60vw] rounded-full bg-gradient-to-b from-amber-100/40 to-transparent blur-3xl opacity-60" />
+                <div className="absolute bottom-0 left-0 w-[50vw] h-[50vw] rounded-full bg-gradient-to-t from-orange-100/30 to-transparent blur-3xl opacity-50" />
+            </div>
+
+            <div className="relative z-10 max-w-4xl mx-auto px-5 py-12 md:py-20 flex flex-col items-center">
+                <header className="text-center mb-12 animate-in slide-in-from-top-4 duration-700 fade-in">
+                    <h1 className="text-4xl md:text-6xl font-black text-amber-950 mb-4 tracking-tighter leading-tight">
+                        Daily<span className="text-amber-600">QT</span>
+                    </h1>
+                    <p className="text-gray-500 font-medium text-lg md:text-xl">매일의 은혜를 기록하고 나누는 공간</p>
+                </header>
+
+                <div className="w-full mb-12 transform hover:scale-[1.01] transition-transform duration-500 animate-in slide-in-from-bottom-4 duration-700 delay-100 fade-in fill-mode-backwards">
+                    <VerseCard verse={verse} />
+                </div>
+
+                <div className="mb-20 animate-in slide-in-from-bottom-4 duration-700 delay-200 fade-in fill-mode-backwards">
+                    <button
+                        onClick={() => {
+                            setEditingLog(undefined);
+                            setEditingContent(undefined);
+                            setIsWriteModalOpen(true);
+                        }}
+                        className="group relative inline-flex items-center justify-center px-8 py-4 bg-gray-900 text-white font-bold text-lg rounded-full hover:bg-gray-800 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95"
+                    >
+                        <PenTool className="w-5 h-5 mr-3 group-hover:rotate-12 transition-transform duration-300 text-amber-400" />
+                        나만의 묵상 기록하기
+                        <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-400 opacity-20 blur group-hover:opacity-40 transition-opacity duration-500"></div>
+                    </button>
+                </div>
+
+                <div className="w-full animate-in slide-in-from-bottom-4 duration-700 delay-300 fade-in fill-mode-backwards">
+                    <QTList key={refreshKey} onEditLog={handleEditLog} />
+                </div>
+            </div>
+
+            <WriteModal
+                isOpen={isWriteModalOpen}
+                onClose={handleCloseModal}
+                verse={`${verse.reference}`}
+                onSuccess={() => setRefreshKey((prev) => prev + 1)}
+                initialData={editingLog}
+                initialContent={editingContent}
+            />
+        </main>
+    );
+}
