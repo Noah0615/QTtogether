@@ -9,7 +9,7 @@ export async function PUT(
 ) {
     const { id } = await params;
     const body = await request.json();
-    const { password, content, is_public } = body;
+    const { password, content, is_public, bible_verse } = body;
 
     // 1. Verify password
     const { data: currentData, error: fetchError } = await supabase
@@ -30,7 +30,7 @@ export async function PUT(
     // 2. Update
     const { data, error } = await supabase
         .from('qt_logs')
-        .update({ content, is_public })
+        .update({ content, is_public, bible_verse })
         .eq('id', id)
         .select()
         .single();
