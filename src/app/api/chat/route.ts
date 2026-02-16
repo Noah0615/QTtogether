@@ -71,7 +71,7 @@ export async function POST(request: Request) {
     } catch (error: any) {
         console.error('Gemini Chat Error:', error);
         return NextResponse.json(
-            { error: 'Failed to generate chat response' },
+            { error: error.message || 'Failed to generate chat response' },
             { status: 500 }
         );
     }

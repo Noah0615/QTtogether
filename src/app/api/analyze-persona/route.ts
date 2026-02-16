@@ -69,7 +69,7 @@ export async function POST(request: Request) {
     } catch (error: any) {
         console.error('Gemini Analysis Error:', error);
         return NextResponse.json(
-            { error: 'Failed to analyze persona' },
+            { error: error.message || 'Failed to analyze persona' },
             { status: 500 }
         );
     }

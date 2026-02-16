@@ -44,15 +44,18 @@ export default function PersonaChat({ content }: PersonaChatProps) {
                 body: JSON.stringify({ content }),
             });
 
-            if (!res.ok) throw new Error('Failed to analyze');
+            if (!res.ok) {
+                const errData = await res.json();
+                throw new Error(errData.error || 'Failed to analyze');
+            }
 
             const data = await res.json();
             setAnalysis(data);
             setMessages([{ role: 'assistant', content: data.opening_message }]);
             setChatOpen(true);
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            alert('분석에 실패했습니다. 잠시 후 다시 시도해주세요.');
+            alert(error.message || '분석에 실패했습니다. 잠시 후 다시 시도해주세요.');
         } finally {
             setLoading(false);
         }
@@ -122,8 +125,8 @@ export default function PersonaChat({ content }: PersonaChatProps) {
                     {messages.map((msg, idx) => (
                         <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                             <div className={`max-w-[80%] p-3 rounded-2xl text-sm leading-relaxed shadow-sm ${msg.role === 'user'
-                                    ? 'bg-indigo-600 text-white rounded-tr-none'
-                                    : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'
+                                ? 'bg-indigo-600 text-white rounded-tr-none'
+                                : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'
                                 }`}>
                                 {msg.content}
                             </div>
