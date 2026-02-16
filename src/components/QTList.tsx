@@ -116,14 +116,14 @@ export default function QTList({ onEditLog }: QTListProps) {
     return (
         <div className="w-full max-w-4xl mx-auto pb-20">
             <div className="flex justify-between items-center mb-8 px-2">
-                <h3 className="text-xl font-bold text-gray-800 flex items-center tracking-tight">
-                    <span className="w-2.5 h-2.5 bg-amber-500 rounded-full mr-3 shadow-sm"></span>
+                <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center tracking-tight">
+                    <span className="w-2.5 h-2.5 bg-amber-500 rounded-full mr-3 shadow-sm border-2 border-white dark:border-gray-800"></span>
                     은혜 나눔
                 </h3>
                 <button
                     onClick={fetchLogs}
                     disabled={loading}
-                    className="p-2.5 text-gray-400 hover:text-amber-600 transition-all rounded-full hover:bg-white hover:shadow-sm"
+                    className="p-2.5 text-gray-400 dark:text-gray-500 hover:text-amber-600 dark:hover:text-amber-400 transition-all rounded-full hover:bg-white dark:hover:bg-gray-800 hover:shadow-sm"
                     title="새로고침"
                 >
                     {loading ? <Loader2 size={20} className="animate-spin text-amber-500" /> : <RotateCw size={20} />}
@@ -131,8 +131,8 @@ export default function QTList({ onEditLog }: QTListProps) {
             </div>
 
             {logs.length === 0 && !loading ? (
-                <div className="text-center py-24 bg-white/40 rounded-3xl border-2 border-dashed border-gray-200 backdrop-blur-sm">
-                    <p className="text-gray-400 font-medium">아직 작성된 묵상이 없습니다.<br />오늘의 첫 번째 은혜를 나눠주세요!</p>
+                <div className="text-center py-24 bg-white/40 dark:bg-gray-800/40 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-700 backdrop-blur-sm">
+                    <p className="text-gray-400 dark:text-gray-500 font-medium">아직 작성된 묵상이 없습니다.<br />오늘의 첫 번째 은혜를 나눠주세요!</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 auto-rows-fr">

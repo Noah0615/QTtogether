@@ -161,58 +161,58 @@ export default function WriteModal({ isOpen, onClose, verse, onSuccess, initialD
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-lg flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200 border dark:border-gray-800">
 
                 {/* Header */}
-                <div className="flex items-center justify-between p-5 border-b">
-                    <h2 className="text-xl font-bold text-gray-800">{initialData ? '묵상 수정하기' : '묵상 기록하기'}</h2>
-                    <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                        <X size={20} className="text-gray-500" />
+                <div className="flex items-center justify-between p-5 border-b dark:border-gray-800">
+                    <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">{initialData ? '묵상 수정하기' : '묵상 기록하기'}</h2>
+                    <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
+                        <X size={20} className="text-gray-500 dark:text-gray-400" />
                     </button>
                 </div>
 
                 {/* Form Body */}
-                <form onSubmit={handleSubmit} className="p-6 overflow-y-auto flex-1">
+                <form onSubmit={handleSubmit} className="p-6 overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-gray-800">
                     {/* Inspiration Verse Display */}
-                    <div className="mb-6 text-sm text-gray-600 bg-amber-50 p-4 rounded-xl border border-amber-100 flex items-start">
-                        <div className="w-1 h-10 bg-amber-400 rounded-full mr-3 shrink-0"></div>
+                    <div className="mb-6 text-sm text-gray-600 dark:text-gray-300 bg-amber-50 dark:bg-amber-900/20 p-4 rounded-xl border border-amber-100 dark:border-amber-800 flex items-start">
+                        <div className="w-1 h-10 bg-amber-400 dark:bg-amber-500 rounded-full mr-3 shrink-0"></div>
                         <div>
-                            <span className="block font-bold text-amber-800 mb-1 text-xs uppercase tracking-wider">오늘의 묵상 주제</span>
+                            <span className="block font-bold text-amber-800 dark:text-amber-500 mb-1 text-xs uppercase tracking-wider">오늘의 묵상 주제</span>
                             {verse.split(' - ')[0]}
                         </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 mb-5">
                         <div className="col-span-2">
-                            <label className="block text-sm font-bold text-gray-700 mb-2">오늘 묵상한 말씀</label>
+                            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">오늘 묵상한 말씀</label>
                             <input
                                 type="text"
                                 value={userVerse}
                                 onChange={(e) => setUserVerse(e.target.value)}
-                                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all placeholder-gray-400"
+                                className="w-full p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all placeholder-gray-400 dark:text-gray-100"
                                 placeholder="예) 요한복음 3장 16절"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">닉네임</label>
+                            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">닉네임</label>
                             <input
                                 type="text"
                                 required
                                 value={nickname}
                                 onChange={(e) => setNickname(e.target.value)}
-                                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all"
+                                className="w-full p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all dark:text-gray-100"
                                 placeholder="Name"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">비밀번호 (4자리)</label>
+                            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">비밀번호 (4자리)</label>
                             <input
                                 type="password"
                                 required
                                 maxLength={4}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value.replace(/[^0-9]/g, ''))}
-                                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all tracking-widest"
+                                className="w-full p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all tracking-widest dark:text-gray-100"
                                 placeholder="••••"
                                 inputMode="numeric"
                             />
@@ -220,45 +220,45 @@ export default function WriteModal({ isOpen, onClose, verse, onSuccess, initialD
                     </div>
 
                     <div className="mb-6">
-                        <label className="block text-sm font-bold text-gray-700 mb-2">나눔 내용</label>
+                        <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">나눔 내용</label>
                         <textarea
                             required
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
-                            className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl h-32 resize-none focus:bg-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all leading-relaxed"
+                            className="w-full p-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl h-32 resize-none focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all leading-relaxed dark:text-gray-100"
                             placeholder="오늘 받은 은혜를 나누어 주세요..."
                         />
                     </div>
 
                     {/* Media Attachment */}
                     <div className="mb-6">
-                        <label className="block text-sm font-bold text-gray-700 mb-2">미디어 첨부 (선택)</label>
+                        <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">미디어 첨부 (선택)</label>
                         <div className="flex gap-2 mb-3">
                             <button
                                 type="button"
                                 onClick={() => { setMediaType('none'); setMediaUrl(''); setPreviewUrl(null); setSelectedFile(null); }}
-                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${mediaType === 'none' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${mediaType === 'none' ? 'bg-gray-800 text-white dark:bg-gray-700' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
                             >
                                 없음
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setMediaType('image')}
-                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center ${mediaType === 'image' ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center ${mediaType === 'image' ? 'bg-amber-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
                             >
                                 <ImageIcon size={14} className="mr-1.5" /> 이미지
                             </button>
                             <button
                                 type="button"
                                 onClick={() => { setMediaType('youtube'); setPreviewUrl(null); setSelectedFile(null); }}
-                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center ${mediaType === 'youtube' ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center ${mediaType === 'youtube' ? 'bg-red-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
                             >
                                 <LinkIcon size={14} className="mr-1.5" /> 유튜브
                             </button>
                         </div>
 
                         {mediaType === 'image' && (
-                            <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-amber-300 transition-colors bg-gray-50">
+                            <div className="border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl p-4 text-center hover:border-amber-300 dark:hover:border-amber-600 transition-colors bg-gray-50 dark:bg-gray-800">
                                 {previewUrl ? (
                                     <div className="relative aspect-video rounded-lg overflow-hidden bg-black/5">
                                         <img src={previewUrl} alt="Preview" className="w-full h-full object-contain" />
@@ -272,8 +272,8 @@ export default function WriteModal({ isOpen, onClose, verse, onSuccess, initialD
                                     </div>
                                 ) : (
                                     <label className="cursor-pointer block py-4">
-                                        <Upload className="mx-auto text-gray-400 mb-2" size={24} />
-                                        <span className="text-sm text-gray-500">클릭하여 이미지 업로드</span>
+                                        <Upload className="mx-auto text-gray-400 dark:text-gray-500 mb-2" size={24} />
+                                        <span className="text-sm text-gray-500 dark:text-gray-400">클릭하여 이미지 업로드</span>
                                         <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
                                     </label>
                                 )}
@@ -285,16 +285,16 @@ export default function WriteModal({ isOpen, onClose, verse, onSuccess, initialD
                                 type="text"
                                 value={mediaUrl}
                                 onChange={(e) => setMediaUrl(e.target.value)}
-                                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all placeholder-gray-400"
+                                className="w-full p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all placeholder-gray-400 dark:text-gray-100"
                                 placeholder="YouTube 영상 링크를 입력하세요 (예: https://youtu.be/...)"
                             />
                         )}
                     </div>
 
-                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+                    <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
                         <div className="text-sm">
-                            <span className="block font-bold text-gray-700">공개 설정</span>
-                            <span className="text-gray-500 text-xs">{isPublic ? '모든 사람이 볼 수 있습니다' : '비밀번호를 입력해야 볼 수 있습니다'}</span>
+                            <span className="block font-bold text-gray-700 dark:text-gray-300">공개 설정</span>
+                            <span className="text-gray-500 dark:text-gray-400 text-xs">{isPublic ? '모든 사람이 볼 수 있습니다' : '비밀번호를 입력해야 볼 수 있습니다'}</span>
                         </div>
                         <label className="flex items-center cursor-pointer select-none group relative">
                             <input
@@ -303,17 +303,17 @@ export default function WriteModal({ isOpen, onClose, verse, onSuccess, initialD
                                 onChange={(e) => setIsPublic(e.target.checked)}
                                 className="sr-only"
                             />
-                            <div className={`block w-12 h-7 rounded-full transition-colors duration-300 ease-in-out ${isPublic ? 'bg-amber-500' : 'bg-gray-300'}`}></div>
+                            <div className={`block w-12 h-7 rounded-full transition-colors duration-300 ease-in-out ${isPublic ? 'bg-amber-500' : 'bg-gray-300 dark:bg-gray-600'}`}></div>
                             <div className={`dot absolute left-1 top-1 bg-white w-5 h-5 rounded-full shadow-md transition-transform duration-300 ease-in-out ${isPublic ? 'transform translate-x-5' : ''}`}></div>
                         </label>
                     </div>
                 </form>
 
                 {/* Footer */}
-                <div className="p-5 border-t bg-gray-50/50 rounded-b-2xl flex justify-end gap-3 backdrop-blur-sm">
+                <div className="p-5 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50 rounded-b-2xl flex justify-end gap-3 backdrop-blur-sm">
                     <button
                         onClick={onClose}
-                        className="px-5 py-2.5 text-gray-600 hover:text-gray-800 hover:bg-gray-100 font-bold rounded-xl transition-all"
+                        className="px-5 py-2.5 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 font-bold rounded-xl transition-all"
                     >
                         취소
                     </button>

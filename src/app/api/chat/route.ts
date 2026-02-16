@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import Groq from 'groq-sdk';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const apiKey = process.env.GROQ_API_KEY;
+const apiKey = process.env.GEMINI_API_KEY;
 
 const CHARACTER_PROMPTS: Record<string, string> = {
     David: `
@@ -97,7 +97,7 @@ const CHARACTER_PROMPTS: Record<string, string> = {
 export async function POST(request: Request) {
     if (!apiKey) {
         return NextResponse.json(
-            { error: 'GROQ_API_KEY is not set' },
+            { error: 'GEMINI_API_KEY is not set' },
             { status: 500 }
         );
     }
@@ -119,32 +119,33 @@ export async function POST(request: Request) {
             systemPrompt += `\n\n[USER CONTEXT - QT DEVOTIONAL]\nThe user has shared the following devotional text. Use this to understand their situation, emotions, and specific life context. Refer to it when answering questions to be more personal and accurate.\n"""${userContext}"""`;
         }
 
-        const groq = new Groq({ apiKey });
-
-        // Convert history to Groq format (OpenAI format matches)
-        // Ensure roles are valid.
-        const validHistory = (history || []).map((msg: any) => ({
-            role: msg.role === 'assistant' || msg.role === 'system' ? msg.role : 'user',
-            content: msg.content
-        }));
-
-        const completion = await groq.chat.completions.create({
-            messages: [
-                { role: "system", content: systemPrompt + "\n\nIMPORTANT: Output strictly in Korean (Hangul only). Do NOT use any Hanja (Chinese characters). Use pure Korean words where possible." },
-                ...validHistory,
-                { role: "user", content: message }
-            ],
-            model: "llama-3.3-70b-versatile",
-            temperature: 0.8,
-            max_tokens: 1024,
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const model = genAI.getGenerativeModel({
+            model: "gemini-1.5-pro",
+            systemInstruction: systemPrompt + "\n\nIMPORTANT: Output strictly in Korean (Hangul only). Do NOT use any Hanja (Chinese characters). Use pure Korean words where possible.",
+            generationConfig: {
+                temperature: 0.8,
+                maxOutputTokens: 1024,
+            }
         });
 
-        const reply = completion.choices[0]?.message?.content || "죄송합니다. 응답을 생성할 수 없습니다.";
+        // Convert history to Gemini format
+        const chatHistory = (history || []).map((msg: any) => ({
+            role: msg.role === 'assistant' ? 'model' : 'user',
+            parts: [{ text: msg.content }]
+        }));
+
+        const chat = model.startChat({
+            history: chatHistory,
+        });
+
+        const result = await chat.sendMessage(message);
+        const reply = result.response.text();
 
         return NextResponse.json({ reply });
 
     } catch (error: any) {
-        console.error('Groq Chat Error:', error);
+        console.error('Gemini Chat Error:', error);
         return NextResponse.json(
             { error: error.message || 'Failed to generate chat response' },
             { status: 500 }

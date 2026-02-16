@@ -6,6 +6,7 @@ import QTList from '@/components/QTList';
 import { PenTool } from 'lucide-react';
 import { BibleVerse } from '@/lib/getDailyVerse';
 import { QTLog } from '@/lib/supabase';
+import ThemeToggle from '@/components/ThemeToggle';
 
 interface HomeClientProps {
     verse: BibleVerse;
@@ -32,19 +33,23 @@ export default function HomeClient({ verse }: HomeClientProps) {
     };
 
     return (
-        <main className="min-h-screen bg-[#faf9f6] text-gray-800 relative selection:bg-amber-200 font-sans">
+        <main className="min-h-screen bg-[#faf9f6] dark:bg-gray-950 text-gray-900 dark:text-gray-100 relative selection:bg-amber-200 dark:selection:bg-amber-900 font-sans transition-colors duration-300">
             {/* Background decoration */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-                <div className="absolute top-0 right-0 w-[60vw] h-[60vw] rounded-full bg-gradient-to-b from-amber-100/40 to-transparent blur-3xl opacity-60" />
-                <div className="absolute bottom-0 left-0 w-[50vw] h-[50vw] rounded-full bg-gradient-to-t from-orange-100/30 to-transparent blur-3xl opacity-50" />
+                <div className="absolute top-0 right-0 w-[60vw] h-[60vw] rounded-full bg-gradient-to-b from-amber-100/40 to-transparent blur-3xl opacity-60 dark:from-indigo-900/20 dark:opacity-40" />
+                <div className="absolute bottom-0 left-0 w-[50vw] h-[50vw] rounded-full bg-gradient-to-t from-orange-100/30 to-transparent blur-3xl opacity-50 dark:from-purple-900/20 dark:opacity-30" />
+            </div>
+
+            <div className="fixed top-5 right-5 z-50">
+                <ThemeToggle />
             </div>
 
             <div className="relative z-10 max-w-4xl mx-auto px-5 py-12 md:py-20 flex flex-col items-center">
                 <header className="text-center mb-12 animate-in slide-in-from-top-4 duration-700 fade-in">
-                    <h1 className="text-4xl md:text-6xl font-black text-amber-950 mb-4 tracking-tighter leading-tight">
-                        Daily<span className="text-amber-600">QT</span>
+                    <h1 className="text-4xl md:text-6xl font-black text-amber-950 dark:text-amber-100 mb-4 tracking-tighter leading-tight drop-shadow-sm">
+                        Daily<span className="text-amber-600 dark:text-amber-400">QT</span>
                     </h1>
-                    <p className="text-gray-500 font-medium text-lg md:text-xl">매일의 은혜를 기록하고 나누는 공간</p>
+                    <p className="text-gray-600 dark:text-gray-400 font-medium text-lg md:text-xl">매일의 은혜를 기록하고 나누는 공간</p>
                 </header>
 
                 <div className="w-full mb-12 transform hover:scale-[1.01] transition-transform duration-500 animate-in slide-in-from-bottom-4 duration-700 delay-100 fade-in fill-mode-backwards">

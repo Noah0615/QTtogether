@@ -96,11 +96,11 @@ export default function PersonaChat({ content }: PersonaChatProps) {
 
     if (chatOpen && analysis) {
         return (
-            <div className="mt-8 bg-white border border-indigo-100 rounded-2xl shadow-lg overflow-hidden flex flex-col h-[500px]">
+            <div className="mt-8 bg-white dark:bg-gray-900 border border-indigo-100 dark:border-indigo-900 rounded-2xl shadow-lg overflow-hidden flex flex-col h-[500px]">
                 {/* Header */}
-                <div className="bg-indigo-50 p-4 border-b border-indigo-100 flex items-center justify-between">
+                <div className="bg-indigo-50 dark:bg-indigo-900/30 p-4 border-b border-indigo-100 dark:border-indigo-800 flex items-center justify-between">
                     <div className="flex items-center">
-                        <div className="w-10 h-10 rounded-full bg-indigo-200 flex items-center justify-center mr-3 text-xl shadow-inner">
+                        <div className="w-10 h-10 rounded-full bg-indigo-200 dark:bg-indigo-700 flex items-center justify-center mr-3 text-xl shadow-inner">
                             {analysis.character === 'David' ? '👑' :
                                 analysis.character === 'Paul' ? '📜' :
                                     analysis.character === 'Peter' ? '⚓' :
@@ -109,25 +109,25 @@ export default function PersonaChat({ content }: PersonaChatProps) {
                                                 analysis.character === 'Esther' ? '👸' : '🕊️'}
                         </div>
                         <div>
-                            <h3 className="font-bold text-indigo-900">{analysis.character}와의 대화</h3>
-                            <p className="text-xs text-indigo-600 truncate max-w-[200px]">{analysis.reason}</p>
+                            <h3 className="font-bold text-indigo-900 dark:text-indigo-200">{analysis.character}와의 대화</h3>
+                            <p className="text-xs text-indigo-600 dark:text-indigo-400 truncate max-w-[200px]">{analysis.reason}</p>
                         </div>
                     </div>
                     <button
                         onClick={() => setChatOpen(false)}
-                        className="p-2 text-gray-400 hover:text-gray-600 hover:bg-indigo-100 rounded-full transition-colors"
+                        className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 hover:bg-indigo-100 dark:hover:bg-indigo-800 rounded-full transition-colors"
                     >
                         <X size={20} />
                     </button>
                 </div>
 
                 {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-4 bg-gray-50/50 space-y-4">
+                <div className="flex-1 overflow-y-auto p-4 bg-gray-50/50 dark:bg-gray-950/50 space-y-4 scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-gray-800">
                     {messages.map((msg, idx) => (
                         <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                            <div className={`max-w-[80%] p-3 rounded-2xl text-sm leading-relaxed shadow-sm ${msg.role === 'user'
+                            <div className={`max-w-[85%] p-3.5 rounded-2xl text-sm leading-relaxed shadow-sm ${msg.role === 'user'
                                 ? 'bg-indigo-600 text-white rounded-tr-none'
-                                : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'
+                                : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 border border-gray-100 dark:border-gray-700 rounded-tl-none'
                                 }`}>
                                 {msg.content}
                             </div>
@@ -135,10 +135,10 @@ export default function PersonaChat({ content }: PersonaChatProps) {
                     ))}
                     {chatLoading && (
                         <div className="flex justify-start">
-                            <div className="bg-white p-3 rounded-2xl rounded-tl-none border border-gray-100 shadow-sm flex space-x-1 items-center">
-                                <div className="w-2 h-2 bg-indigo-300 rounded-full animate-bounce delay-0"></div>
-                                <div className="w-2 h-2 bg-indigo-300 rounded-full animate-bounce delay-150"></div>
-                                <div className="w-2 h-2 bg-indigo-300 rounded-full animate-bounce delay-300"></div>
+                            <div className="bg-white dark:bg-gray-800 p-3 rounded-2xl rounded-tl-none border border-gray-100 dark:border-gray-700 shadow-sm flex space-x-1 items-center">
+                                <div className="w-2 h-2 bg-indigo-300 dark:bg-indigo-500 rounded-full animate-bounce delay-0"></div>
+                                <div className="w-2 h-2 bg-indigo-300 dark:bg-indigo-500 rounded-full animate-bounce delay-150"></div>
+                                <div className="w-2 h-2 bg-indigo-300 dark:bg-indigo-500 rounded-full animate-bounce delay-300"></div>
                             </div>
                         </div>
                     )}
@@ -146,13 +146,13 @@ export default function PersonaChat({ content }: PersonaChatProps) {
                 </div>
 
                 {/* Input */}
-                <form onSubmit={handleSendMessage} className="p-3 bg-white border-t border-gray-100 flex gap-2">
+                <form onSubmit={handleSendMessage} className="p-3 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 flex gap-2">
                     <input
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         placeholder="메시지를 입력하세요..."
-                        className="flex-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all text-sm"
+                        className="flex-1 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition-all text-sm"
                         disabled={chatLoading}
                     />
                     <button
@@ -168,15 +168,15 @@ export default function PersonaChat({ content }: PersonaChatProps) {
     }
 
     return (
-        <div className="mt-8 pt-8 border-t border-dashed border-gray-200">
-            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 border border-indigo-100 text-center relative overflow-hidden group hover:shadow-md transition-all duration-300">
+        <div className="mt-8 pt-8 border-t border-dashed border-gray-200 dark:border-gray-800">
+            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-2xl p-6 border border-indigo-100 dark:border-indigo-800 text-center relative overflow-hidden group hover:shadow-md transition-all duration-300">
                 <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
                     <Sparkles size={100} className="text-indigo-500" />
                 </div>
 
                 <div className="relative z-10">
-                    <h3 className="text-lg font-bold text-indigo-900 mb-2 font-serif">나의 묵상 페르소나 찾기</h3>
-                    <p className="text-sm text-indigo-700/80 mb-6 leading-relaxed">
+                    <h3 className="text-lg font-bold text-indigo-900 dark:text-indigo-200 mb-2 font-serif">나의 묵상 페르소나 찾기</h3>
+                    <p className="text-sm text-indigo-700/80 dark:text-indigo-300/80 mb-6 leading-relaxed">
                         내가 쓴 묵상 글을 분석해서,<br />
                         나와 가장 닮은 성경 인물을 찾아 대화해보세요.
                     </p>
@@ -184,7 +184,7 @@ export default function PersonaChat({ content }: PersonaChatProps) {
                     <button
                         onClick={handleAnalyze}
                         disabled={loading}
-                        className="inline-flex items-center justify-center px-6 py-3 bg-white text-indigo-600 font-bold rounded-xl shadow-sm border border-indigo-100 hover:bg-indigo-50 hover:shadow hover:-translate-y-0.5 transition-all text-sm group-hover:border-indigo-200 w-full md:w-auto"
+                        className="inline-flex items-center justify-center px-6 py-3 bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-300 font-bold rounded-xl shadow-sm border border-indigo-100 dark:border-indigo-700 hover:bg-indigo-50 dark:hover:bg-gray-700 hover:shadow hover:-translate-y-0.5 transition-all text-sm group-hover:border-indigo-200 w-full md:w-auto"
                     >
                         {loading ? (
                             <>

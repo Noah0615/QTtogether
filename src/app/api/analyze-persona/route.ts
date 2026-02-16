@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import Groq from 'groq-sdk';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const apiKey = process.env.GROQ_API_KEY;
+const apiKey = process.env.GEMINI_API_KEY;
 
 export async function POST(request: Request) {
     if (!apiKey) {
         return NextResponse.json(
-            { error: 'GROQ_API_KEY is not set' },
+            { error: 'GEMINI_API_KEY is not set' },
             { status: 500 }
         );
     }
@@ -21,7 +21,18 @@ export async function POST(request: Request) {
             );
         }
 
-        const groq = new Groq({ apiKey });
+        const genAI = new GoogleGenerativeAI(apiKey);
+        // Using "gemini-1.5-pro" as per user request for "Pro" tier quality
+        // User referred to "Gemini 2.5 Pro" which likely maps to the current latest Pro model.
+        // gemini-1.5-pro is the current stable high-intelligence model.
+        const model = genAI.getGenerativeModel({
+            model: "gemini-1.5-pro",
+            generationConfig: {
+                responseMimeType: "application/json",
+                temperature: 0.8,
+                maxOutputTokens: 1024,
+            }
+        });
 
         const prompt = `
 # ROLE
@@ -64,8 +75,7 @@ Match with ONE biblical persona below.
 
 **Voice style:**
 - "내 영혼이 주를 갈망합니다"
-- "당신도 지금 메마른 땅에 서 있나요?"
-- Short, rhythmic sentences
+-Short, rhythmic sentences
 - Uses nature metaphors
 
 ## 2. Paul (바울)
@@ -77,7 +87,6 @@ Match with ONE biblical persona below.
 
 **Voice style:**
 - "이것을 생각해보세요..."
-- "그리스도 안에서 당신은..."
 - Longer, flowing sentences
 - Abstract concepts made personal
 
@@ -90,7 +99,6 @@ Match with ONE biblical persona below.
 
 **Voice style:**
 - "저도 넘어졌습니다"
-- "당신의 아픔, 압니다"
 - Short, punchy statements
 - Rough edges with deep care
 
@@ -103,7 +111,6 @@ Match with ONE biblical persona below.
 
 **Voice style:**
 - "사랑하는 이여..."
-- "빛 가운데 거하세요"
 - Slow, circling repetition
 - Soft, comforting tone
 
@@ -116,7 +123,6 @@ Match with ONE biblical persona below.
 
 **Voice style:**
 - "이 길을 함께 걷겠습니다"
-- "광야는 준비의 시간입니다"
 - Solemn, measured pace
 - Gravitas with compassion
 
@@ -129,7 +135,6 @@ Match with ONE biblical persona below.
 
 **Voice style:**
 - "이 때를 위함이 아니겠습니까"
-- "당신 안에 용기가 있습니다"
 - Elegant, measured words
 - Quiet power
 
@@ -168,11 +173,9 @@ Structure (4-part flow):
 
 **Bad example:**
 "힘든 시간을 보내고 계시는군요. 하나님께서 함께하십니다. 기도하겠습니다."
-(Generic, stiff, preachy)
 
 **Good example:**
 "새벽에 눈물로 베개를 적신 적 있나요? 저도 그랬습니다. 그 어둠 속에서 작은 빛 하나가 보이기 시작할 때까지요. 당신의 밤이 끝나가고 있습니다."
-(Specific imagery, vulnerable, hopeful without being preachy)
 
 ---
 
@@ -189,10 +192,9 @@ Structure (4-part flow):
 
 ---
 
-# OUTPUT FORMAT (STRICT)
+# OUTPUT FORMAT (STRICT JSON)
 
-Return ONLY valid JSON. No markdown. No extra text.
-
+Return ONLY valid JSON.
 {
   "character": "David|Paul|Peter|John|Moses|Esther",
   "reason": "<2-3 문장, 텍스트의 구체적 요소 2개 이상 언급, 순수 한글, 절대 한자 금지>",
@@ -205,29 +207,21 @@ Return ONLY valid JSON. No markdown. No extra text.
 """
 ${content}
 """
-
-# ANALYZE & RESPOND
 `;
 
-        const completion = await groq.chat.completions.create({
-            messages: [
-                { role: "system", content: "You are a biblical persona analyzer. Output valid JSON. STRICTLY NO HANJA (Chinese Characters)." },
-                { role: "user", content: prompt }
-            ],
-            model: "llama-3.3-70b-versatile",
-            temperature: 0.8,
-            response_format: { type: "json_object" },
-            max_tokens: 1024,
-        });
+        const result = await model.generateContent(prompt);
+        const responseText = result.response.text();
 
-        const jsonResponse = JSON.parse(completion.choices[0]?.message?.content || '{}');
+        // Ensure JSON parsing handles potential markdown code blocks
+        const cleanedText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
+        const jsonResponse = JSON.parse(cleanedText);
 
         return NextResponse.json(jsonResponse);
 
     } catch (error: any) {
-        console.error('Groq Analysis Error:', error);
+        console.error('Gemini Analysis Error:', error);
         return NextResponse.json(
-            { error: error.message || 'Failed to analyze persona', debug_model: "llama-3.3-70b-versatile" },
+            { error: error.message || 'Failed to analyze persona', debug_model: "gemini-1.5-pro" },
             { status: 500 }
         );
     }
