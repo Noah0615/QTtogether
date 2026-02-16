@@ -51,7 +51,7 @@ export async function POST(request: Request) {
                 { role: "system", content: "You are a biblical persona analyzer. Output valid JSON." },
                 { role: "user", content: prompt }
             ],
-            model: "llama3-70b-8192",
+            model: "llama-3.3-70b-versatile",
             temperature: 0.5,
             response_format: { type: "json_object" },
         });
