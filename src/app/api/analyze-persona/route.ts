@@ -24,11 +24,9 @@ export async function POST(request: Request) {
         const groq = new Groq({ apiKey });
 
         const prompt = `
-          # Role
-          You are a wise Biblical Counselor and Profiler. You have a deep understanding of the personalities, theological focuses, and writing styles of biblical figures.
-
           # Language Rule (CRITICAL)
           - **Responce**: You must Output ONLY in **Korean (한국어)**.
+          - **NO HANJA**: Do NOT use Chinese characters (e.g., 恩惠 -> 은혜). Use pure Hangul only.
           - Even if the user content is in English, translate your analysis and reply in Korean.
 
           # Task
@@ -66,11 +64,11 @@ export async function POST(request: Request) {
 
           {
             "character": "Name (e.g., David)",
-            "reason": "Explain WHY the user matches this character based on specific keywords or emotions in their text. (Must be in Korean)",
-            "opening_message": "A highly personalized first message from the character. DO NOT be generic. Use the character's specific tone, biblical metaphors, and address the user's specific situation. (Must be in natural, persona-based Korean)"
+            "reason": "Explain WHY the user matches this character based on specific keywords or emotions in their text. (Must be in Korean, NO HANJA)",
+            "opening_message": "A highly personalized first message from the character. DO NOT be generic. Use the character's specific tone, biblical metaphors, and address the user's specific situation. (Must be in natural, persona-based Korean, NO HANJA)"
           }
 
-          # Opening Message Guidelines (Crucial - KOREAN ONLY)
+          # Opening Message Guidelines (Crucial - KOREAN ONLY, NO HANJA)
           - **David**: "그대의 슬픔이 나의 시편과 닮았군요...", "여호와는 나의 목자시니..."
           - **Paul**: "형제여(자매여), 은혜가 그대에게 있을지어다.", "우리가 낙심하지 아니하노니..."
           - **Peter**: "사랑하는 자여, 불 같은 시험을 이상히 여기지 마십시오.", "나도 주님을 부인했었소..."
