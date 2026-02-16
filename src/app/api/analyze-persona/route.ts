@@ -63,7 +63,7 @@ export async function POST(request: Request) {
     } catch (error: any) {
         console.error('Groq Analysis Error:', error);
         return NextResponse.json(
-            { error: error.message || 'Failed to analyze persona' },
+            { error: error.message || 'Failed to analyze persona', debug_model: "llama-3.3-70b-versatile" },
             { status: 500 }
         );
     }
