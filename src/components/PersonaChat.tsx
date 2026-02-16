@@ -100,13 +100,19 @@ export default function PersonaChat({ content }: PersonaChatProps) {
                 {/* Header */}
                 <div className="bg-indigo-50 dark:bg-indigo-900/30 p-4 border-b border-indigo-100 dark:border-indigo-800 flex items-center justify-between">
                     <div className="flex items-center">
-                        <div className="w-10 h-10 rounded-full bg-indigo-200 dark:bg-indigo-700 flex items-center justify-center mr-3 text-xl shadow-inner">
-                            {analysis.character === 'David' ? '👑' :
-                                analysis.character === 'Paul' ? '📜' :
-                                    analysis.character === 'Peter' ? '⚓' :
-                                        analysis.character === 'John' ? '❤️' :
-                                            analysis.character === 'Moses' ? '⛰️' :
-                                                analysis.character === 'Esther' ? '👸' : '🕊️'}
+                        <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-indigo-200 dark:border-indigo-700 mr-3 shadow-md relative bg-white dark:bg-gray-800">
+                            <img
+                                src={`/personas/${analysis.character}.png`}
+                                alt={analysis.character}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                    e.currentTarget.parentElement?.classList.add('flex', 'items-center', 'justify-center');
+                                    if (e.currentTarget.parentElement) {
+                                        e.currentTarget.parentElement.innerHTML = '🕊️';
+                                    }
+                                }}
+                            />
                         </div>
                         <div>
                             <h3 className="font-bold text-indigo-900 dark:text-indigo-200">{analysis.character}와의 대화</h3>
@@ -124,7 +130,16 @@ export default function PersonaChat({ content }: PersonaChatProps) {
                 {/* Messages */}
                 <div className="flex-1 overflow-y-auto p-4 bg-gray-50/50 dark:bg-gray-950/50 space-y-4 scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-gray-800">
                     {messages.map((msg, idx) => (
-                        <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                        <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start items-end'}`}>
+                            {msg.role === 'assistant' && (
+                                <div className="w-8 h-8 rounded-full overflow-hidden border border-indigo-200 dark:border-indigo-700 mr-2 shadow-sm shrink-0 bg-white dark:bg-gray-800 hidden sm:block">
+                                    <img
+                                        src={`/personas/${analysis.character}.png`}
+                                        alt={analysis.character}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                            )}
                             <div className={`max-w-[85%] p-3.5 rounded-2xl text-sm leading-relaxed shadow-sm ${msg.role === 'user'
                                 ? 'bg-indigo-600 text-white rounded-tr-none'
                                 : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 border border-gray-100 dark:border-gray-700 rounded-tl-none'
@@ -134,7 +149,14 @@ export default function PersonaChat({ content }: PersonaChatProps) {
                         </div>
                     ))}
                     {chatLoading && (
-                        <div className="flex justify-start">
+                        <div className="flex justify-start items-end">
+                            <div className="w-8 h-8 rounded-full overflow-hidden border border-indigo-200 dark:border-indigo-700 mr-2 shadow-sm shrink-0 bg-white dark:bg-gray-800 hidden sm:block">
+                                <img
+                                    src={`/personas/${analysis.character}.png`}
+                                    alt={analysis.character}
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
                             <div className="bg-white dark:bg-gray-800 p-3 rounded-2xl rounded-tl-none border border-gray-100 dark:border-gray-700 shadow-sm flex space-x-1 items-center">
                                 <div className="w-2 h-2 bg-indigo-300 dark:bg-indigo-500 rounded-full animate-bounce delay-0"></div>
                                 <div className="w-2 h-2 bg-indigo-300 dark:bg-indigo-500 rounded-full animate-bounce delay-150"></div>
