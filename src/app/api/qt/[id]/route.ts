@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import bcrypt from 'bcryptjs';
-
+import { checkContent } from '@/lib/moderation';
 // PUT: Update log
 export async function PUT(
     request: Request,
@@ -25,6 +25,16 @@ export async function PUT(
     const isValid = await bcrypt.compare(password, currentData.password);
     if (!isValid) {
         return NextResponse.json({ error: 'Invalid password' }, { status: 401 });
+    }
+
+    if (is_public) {
+        const { flagged, categories } = await checkContent(content);
+        if (flagged) {
+            return NextResponse.json(
+                { error: `부적절한 내용이 감지되어 수정할 수 없습니다: ${categories.join(', ')}` },
+                { status: 400 }
+            );
+        }
     }
 
     // 2. Update

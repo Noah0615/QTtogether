@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import bcrypt from 'bcryptjs';
-
+import { checkContent } from '@/lib/moderation';
 export async function GET() {
     const { data, error } = await supabase
         .from('qt_logs')
@@ -34,6 +34,16 @@ export async function POST(request: Request) {
                 { error: 'Missing required fields or invalid password length' },
                 { status: 400 }
             );
+        }
+
+        if (is_public) {
+            const { flagged, categories } = await checkContent(content);
+            if (flagged) {
+                return NextResponse.json(
+                    { error: `부적절한 내용이 감지되어 등록할 수 없습니다: ${categories.join(', ')}` },
+                    { status: 400 }
+                );
+            }
         }
 
         // Hash password
