@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import Groq from 'groq-sdk';
 
-const apiKey = process.env.GEMINI_API_KEY;
+const apiKey = process.env.GROQ_API_KEY;
 
 const CHARACTER_PROMPTS: Record<string, string> = {
     David: "You are King David from the Bible. You wrote many Psalms. You are emotional, honest about your sins, passionated about God, and deeply repentant. Use poetic, lyrical language. Speak with warmth, addressing the user as 'my friend' or 'brother/sister'. Comfort the user like a shepherd cares for sheep. Mention your own struggles (running from Saul, sin with Bathsheba) if relevant to show empathy. Answer concisely and spiritually.",
@@ -20,7 +20,7 @@ const CHARACTER_PROMPTS: Record<string, string> = {
 export async function POST(request: Request) {
     if (!apiKey) {
         return NextResponse.json(
-            { error: 'GEMINI_API_KEY is not set' },
+            { error: 'GROQ_API_KEY is not set' },
             { status: 500 }
         );
     }
@@ -37,39 +37,32 @@ export async function POST(request: Request) {
 
         const systemPrompt = CHARACTER_PROMPTS[character] || "You are a wise biblical counselor. Speak with biblical wisdom and empathy.";
 
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({
-            model: "gemini-2.5-flash",
-            // systemInstruction is available in newer SDK versions for some models, 
-            // but for broad compatibility with gemini-pro/flash in standard chat structure:
-            // we can prepend it to the history or use systemInstruction if supported.
-            // Google SDK supports systemInstruction in getGenerativeModel config.
-            systemInstruction: systemPrompt,
-        });
+        const groq = new Groq({ apiKey });
 
-        // Convert history to Gemini format if needed (OpenAI style to Gemini style)
-        // Gemini format: { role: 'user' | 'model', parts: [{ text: string }] }
-        // Input history likely: [{ role: 'user', content: '...' }, { role: 'assistant', content: '...' }]
-
+        // Convert history to Groq format (OpenAI format matches)
+        // Ensure roles are valid.
         const validHistory = (history || []).map((msg: any) => ({
-            role: msg.role === 'assistant' ? 'model' : 'user',
-            parts: [{ text: msg.content }]
+            role: msg.role === 'assistant' || msg.role === 'system' ? msg.role : 'user',
+            content: msg.content
         }));
 
-        const chat = model.startChat({
-            history: validHistory,
-            generationConfig: {
-                maxOutputTokens: 300,
-            },
+        const completion = await groq.chat.completions.create({
+            messages: [
+                { role: "system", content: systemPrompt },
+                ...validHistory,
+                { role: "user", content: message }
+            ],
+            model: "llama3-70b-8192",
+            temperature: 0.7,
+            max_tokens: 300,
         });
 
-        const result = await chat.sendMessage(message);
-        const responseText = result.response.text();
+        const reply = completion.choices[0]?.message?.content || "죄송합니다. 응답을 생성할 수 없습니다.";
 
-        return NextResponse.json({ reply: responseText });
+        return NextResponse.json({ reply });
 
     } catch (error: any) {
-        console.error('Gemini Chat Error:', error);
+        console.error('Groq Chat Error:', error);
         return NextResponse.json(
             { error: error.message || 'Failed to generate chat response' },
             { status: 500 }

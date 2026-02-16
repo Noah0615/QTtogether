@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
+import Groq from 'groq-sdk';
 
-const apiKey = process.env.GEMINI_API_KEY;
+const apiKey = process.env.GROQ_API_KEY;
 
 export async function POST(request: Request) {
     if (!apiKey) {
         return NextResponse.json(
-            { error: 'GEMINI_API_KEY is not set' },
+            { error: 'GROQ_API_KEY is not set' },
             { status: 500 }
         );
     }
@@ -21,53 +21,47 @@ export async function POST(request: Request) {
             );
         }
 
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({
-            model: "gemini-2.5-flash",
-            generationConfig: {
-                responseMimeType: "application/json",
-                responseSchema: {
-                    type: SchemaType.OBJECT,
-                    properties: {
-                        character: { type: SchemaType.STRING },
-                        reason: { type: SchemaType.STRING },
-                        opening_message: { type: SchemaType.STRING },
-                    },
-                    required: ["character", "reason", "opening_message"],
-                } as any,
-            },
-        });
+        const groq = new Groq({ apiKey });
 
         const prompt = `
-        Analyze the following devotional text (QT) written by a user.
-        Identify the spiritual tone, emotional state, and theological themes.
-        Match the user with one of the following biblical figures who best resonates with their reflection:
+        Analyze the following devotional text (QT).
+        Match the user with one of these biblical figures:
         [David, Paul, Peter, John, Moses, Esther]
 
-        - David: Emotional, honest about sin/struggle, passionate worshipper.
-        - Paul: Logical, theological, mission-oriented, emphasizes grace/faith.
-        - Peter: Impulsive, zealous, focused on restoration and growth.
-        - John: Focuses on love, intimacy with God, light/darkness.
-        - Moses: Leadership burden, intercession, intimacy with God's presence.
-        - Esther: Courage in crisis, providence, standing for others.
+        - David: Emotional, honest, passionate worshipper.
+        - Paul: Logical, theological, mission-oriented.
+        - Peter: Impulsive, zealous, restoration.
+        - John: Love, intimacy, light/darkness.
+        - Moses: Leadership, intercession, humility.
+        - Esther: Courage, providence, grace.
 
-        Provide the result in JSON format:
-        - character: The matched name (e.g., "David")
-        - reason: A one-sentence explanation of why they matched.
-        - opening_message: A warm, personalized first message from that character to the user, reflecting the character's biblical personality and the user's specific content. (in Korean)
+        Return ONLY a JSON object with this structure:
+        {
+            "character": "Name",
+            "reason": "One sentence reason",
+            "opening_message": "Warm greeting in Korean reflecting the character's tone"
+        }
 
         User Content:
         """${content}"""
         `;
 
-        const result = await model.generateContent(prompt);
-        const responseText = result.response.text();
-        const jsonResponse = JSON.parse(responseText);
+        const completion = await groq.chat.completions.create({
+            messages: [
+                { role: "system", content: "You are a biblical persona analyzer. Output valid JSON." },
+                { role: "user", content: prompt }
+            ],
+            model: "llama3-70b-8192",
+            temperature: 0.5,
+            response_format: { type: "json_object" },
+        });
+
+        const jsonResponse = JSON.parse(completion.choices[0]?.message?.content || '{}');
 
         return NextResponse.json(jsonResponse);
 
     } catch (error: any) {
-        console.error('Gemini Analysis Error:', error);
+        console.error('Groq Analysis Error:', error);
         return NextResponse.json(
             { error: error.message || 'Failed to analyze persona' },
             { status: 500 }
