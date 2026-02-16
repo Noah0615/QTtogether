@@ -39,7 +39,7 @@ export async function POST(request: Request) {
 
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({
-            model: "gemini-2.0-flash",
+            model: "gemini-2.5-flash",
             // systemInstruction is available in newer SDK versions for some models, 
             // but for broad compatibility with gemini-pro/flash in standard chat structure:
             // we can prepend it to the history or use systemInstruction if supported.
