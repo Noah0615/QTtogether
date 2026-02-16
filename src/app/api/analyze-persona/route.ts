@@ -221,7 +221,7 @@ ${content}
     } catch (error: any) {
         console.error('Gemini Analysis Error:', error);
         return NextResponse.json(
-            { error: error.message || 'Failed to analyze persona', debug_model: "gemini-1.5-pro" },
+            { error: error.message || 'Failed to analyze persona', debug_model: "gemini-2.0-flash-001" },
             { status: 500 }
         );
     }
