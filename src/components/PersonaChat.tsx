@@ -35,6 +35,13 @@ export default function PersonaChat({ content }: PersonaChatProps) {
         scrollToBottom();
     }, [messages, chatOpen]);
 
+    const getCharacterFileName = (name: string) => {
+        if (!name) return 'David'; // Default fallback
+        const cleanName = name.trim();
+        // Capitalize first letter, lowercase the rest
+        return cleanName.charAt(0).toUpperCase() + cleanName.slice(1).toLowerCase();
+    };
+
     const handleAnalyze = async () => {
         setLoading(true);
         try {
@@ -102,7 +109,7 @@ export default function PersonaChat({ content }: PersonaChatProps) {
                     <div className="flex items-center">
                         <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-indigo-200 dark:border-indigo-700 mr-3 shadow-md relative bg-white dark:bg-gray-800">
                             <img
-                                src={`/personas/${analysis.character}.png`}
+                                src={`/personas/${getCharacterFileName(analysis.character)}.png`}
                                 alt={analysis.character}
                                 className="w-full h-full object-cover"
                                 onError={(e) => {
@@ -134,7 +141,7 @@ export default function PersonaChat({ content }: PersonaChatProps) {
                             {msg.role === 'assistant' && (
                                 <div className="w-8 h-8 rounded-full overflow-hidden border border-indigo-200 dark:border-indigo-700 mr-2 shadow-sm shrink-0 bg-white dark:bg-gray-800 hidden sm:block">
                                     <img
-                                        src={`/personas/${analysis.character}.png`}
+                                        src={`/personas/${getCharacterFileName(analysis.character)}.png`}
                                         alt={analysis.character}
                                         className="w-full h-full object-cover"
                                     />
@@ -152,7 +159,7 @@ export default function PersonaChat({ content }: PersonaChatProps) {
                         <div className="flex justify-start items-end">
                             <div className="w-8 h-8 rounded-full overflow-hidden border border-indigo-200 dark:border-indigo-700 mr-2 shadow-sm shrink-0 bg-white dark:bg-gray-800 hidden sm:block">
                                 <img
-                                    src={`/personas/${analysis.character}.png`}
+                                    src={`/personas/${getCharacterFileName(analysis.character)}.png`}
                                     alt={analysis.character}
                                     className="w-full h-full object-cover"
                                 />
