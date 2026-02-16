@@ -211,12 +211,13 @@ ${content}
 
         const completion = await groq.chat.completions.create({
             messages: [
-                { role: "system", content: "You are a biblical persona analyzer. Output valid JSON." },
+                { role: "system", content: "You are a biblical persona analyzer. Output valid JSON. STRICTLY NO HANJA (Chinese Characters)." },
                 { role: "user", content: prompt }
             ],
             model: "llama-3.3-70b-versatile",
             temperature: 0.5,
             response_format: { type: "json_object" },
+            max_tokens: 1024,
         });
 
         const jsonResponse = JSON.parse(completion.choices[0]?.message?.content || '{}');

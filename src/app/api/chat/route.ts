@@ -125,13 +125,13 @@ export async function POST(request: Request) {
 
         const completion = await groq.chat.completions.create({
             messages: [
-                { role: "system", content: systemPrompt },
+                { role: "system", content: systemPrompt + "\n\nIMPORTANT: Output strictly in Korean (Hangul only). Do NOT use any Hanja (Chinese characters). Use pure Korean words where possible." },
                 ...validHistory,
                 { role: "user", content: message }
             ],
             model: "llama-3.3-70b-versatile",
             temperature: 0.7,
-            max_tokens: 300,
+            max_tokens: 1024,
         });
 
         const reply = completion.choices[0]?.message?.content || "죄송합니다. 응답을 생성할 수 없습니다.";
