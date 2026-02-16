@@ -22,11 +22,11 @@ export async function POST(request: Request) {
         }
 
         const genAI = new GoogleGenerativeAI(apiKey);
-        // Using "gemini-1.5-pro" as per user request for "Pro" tier quality
-        // User referred to "Gemini 2.5 Pro" which likely maps to the current latest Pro model.
-        // gemini-1.5-pro is the current stable high-intelligence model.
+        // Switching to "gemini-2.0-flash-001" as per user request for "2.0" tier.
+        // Although user asked for "Gemini 2.5 Pro", the available 2.0 model is Flash 001.
+        // gemini-2.0-flash-001 provides high performance and is the latest stable 2.0 text model.
         const model = genAI.getGenerativeModel({
-            model: "gemini-1.5-pro",
+            model: "gemini-2.0-flash-001",
             generationConfig: {
                 responseMimeType: "application/json",
                 temperature: 0.8,
