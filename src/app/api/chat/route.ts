@@ -103,7 +103,7 @@ export async function POST(request: Request) {
     }
 
     try {
-        const { character, message, history } = await request.json();
+        const { character, message, history, userContext } = await request.json();
 
         if (!character || !message) {
             return NextResponse.json(
@@ -112,7 +112,12 @@ export async function POST(request: Request) {
             );
         }
 
-        const systemPrompt = CHARACTER_PROMPTS[character] || "You are a wise biblical counselor. Speak with biblical wisdom and empathy.";
+        let systemPrompt = CHARACTER_PROMPTS[character] || "You are a wise biblical counselor. Speak with biblical wisdom and empathy.";
+
+        // Inject User's QT Content Context if available
+        if (userContext) {
+            systemPrompt += `\n\n[USER CONTEXT - QT DEVOTIONAL]\nThe user has shared the following devotional text. Use this to understand their situation, emotions, and specific life context. Refer to it when answering questions to be more personal and accurate.\n"""${userContext}"""`;
+        }
 
         const groq = new Groq({ apiKey });
 

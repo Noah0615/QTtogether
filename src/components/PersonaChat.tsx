@@ -78,6 +78,7 @@ export default function PersonaChat({ content }: PersonaChatProps) {
                     character: analysis.character,
                     message: userMessage,
                     history: messages.map(m => ({ role: m.role, content: m.content })),
+                    userContext: content // Pass the QT content for context
                 }),
             });
 
