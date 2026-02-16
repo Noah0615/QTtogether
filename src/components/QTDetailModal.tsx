@@ -1,6 +1,7 @@
 'use client';
 import { X, Trash2, Edit2, ExternalLink } from 'lucide-react';
 import { QTLog } from '@/lib/supabase';
+import PersonaChat from './PersonaChat';
 
 interface QTDetailModalProps {
     isOpen: boolean;
@@ -69,6 +70,8 @@ export default function QTDetailModal({ isOpen, onClose, log, content, onDeleteR
                             "{log.bible_verse}"
                         </div>
                     )}
+
+                    <PersonaChat content={content} />
                 </div>
 
                 <div className="p-5 border-t bg-gray-50 rounded-b-2xl flex justify-between items-center">
