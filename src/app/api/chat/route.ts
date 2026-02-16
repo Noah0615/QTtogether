@@ -121,7 +121,7 @@ export async function POST(request: Request) {
 
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({
-            model: "gemini-2.5-flash",
+            model: "gemini-2.5-pro",
             systemInstruction: systemPrompt + "\n\nIMPORTANT: Output strictly in Korean (Hangul only). Do NOT use any Hanja (Chinese characters). Use pure Korean words where possible.",
             generationConfig: {
                 temperature: 0.8,
