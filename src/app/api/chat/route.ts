@@ -130,7 +130,7 @@ export async function POST(request: Request) {
                 { role: "user", content: message }
             ],
             model: "llama-3.3-70b-versatile",
-            temperature: 0.7,
+            temperature: 0.8,
             max_tokens: 1024,
         });
 

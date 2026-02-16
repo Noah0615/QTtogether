@@ -215,7 +215,7 @@ ${content}
                 { role: "user", content: prompt }
             ],
             model: "llama-3.3-70b-versatile",
-            temperature: 0.5,
+            temperature: 0.8,
             response_format: { type: "json_object" },
             max_tokens: 1024,
         });
