@@ -26,7 +26,7 @@ export async function POST(request: Request) {
         // Although user asked for "Gemini 2.5 Pro", the available 2.0 model is Flash 001.
         // gemini-2.0-flash-001 provides high performance and is the latest stable 2.0 text model.
         const model = genAI.getGenerativeModel({
-            model: "gemini-2.0-flash-001",
+            model: "gemini-2.5-flash",
             generationConfig: {
                 responseMimeType: "application/json",
                 temperature: 0.8,
@@ -221,7 +221,7 @@ ${content}
     } catch (error: any) {
         console.error('Gemini Analysis Error:', error);
         return NextResponse.json(
-            { error: error.message || 'Failed to analyze persona', debug_model: "gemini-2.0-flash-001" },
+            { error: error.message || 'Failed to analyze persona', debug_model: "gemini-2.5-flash" },
             { status: 500 }
         );
     }
