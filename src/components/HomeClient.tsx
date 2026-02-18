@@ -9,7 +9,8 @@ import { QTLog } from '@/lib/supabase';
 import ThemeToggle from '@/components/ThemeToggle';
 import PrayerList from '@/components/PrayerList';
 import PrayerWriteModal from '@/components/PrayerWriteModal';
-import { HeartHandshake } from 'lucide-react';
+import { HeartHandshake, Info } from 'lucide-react';
+import Link from 'next/link';
 
 interface HomeClientProps {
     verse: BibleVerse;
@@ -50,11 +51,16 @@ export default function HomeClient({ verse }: HomeClientProps) {
             </div>
 
             <div className="relative z-10 max-w-4xl mx-auto px-5 py-12 md:py-20 flex flex-col items-center">
-                <header className="text-center mb-12 animate-in slide-in-from-top-4 duration-700 fade-in">
+                <header className="text-center mb-12 animate-in slide-in-from-top-4 duration-700 fade-in relative">
                     <h1 className="text-4xl md:text-6xl font-black text-amber-950 dark:text-amber-100 mb-4 tracking-tighter leading-tight drop-shadow-sm">
                         Daily<span className="text-amber-600 dark:text-amber-400">QT</span>
                     </h1>
-                    <p className="text-gray-600 dark:text-gray-400 font-medium text-lg md:text-xl">매일의 은혜를 기록하고 나누는 공간</p>
+                    <div className="flex items-center justify-center gap-2">
+                        <p className="text-gray-600 dark:text-gray-400 font-medium text-lg md:text-xl">매일의 은혜를 기록하고 나누는 공간</p>
+                        <Link href="/about" className="text-gray-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors" title="서비스 소개">
+                            <Info size={18} />
+                        </Link>
+                    </div>
                 </header>
 
                 <div className="w-full mb-12 transform hover:scale-[1.01] transition-transform duration-500 animate-in slide-in-from-bottom-4 duration-700 delay-100 fade-in fill-mode-backwards">
@@ -66,8 +72,8 @@ export default function HomeClient({ verse }: HomeClientProps) {
                     <button
                         onClick={() => setActiveTab('qt')}
                         className={`flex-1 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${activeTab === 'qt'
-                                ? 'bg-white dark:bg-gray-700 text-amber-600 dark:text-amber-400 shadow-md'
-                                : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                            ? 'bg-white dark:bg-gray-700 text-amber-600 dark:text-amber-400 shadow-md'
+                            : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                             }`}
                     >
                         오늘의 묵상
@@ -75,8 +81,8 @@ export default function HomeClient({ verse }: HomeClientProps) {
                     <button
                         onClick={() => setActiveTab('prayer')}
                         className={`flex-1 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${activeTab === 'prayer'
-                                ? 'bg-white dark:bg-gray-700 text-indigo-600 dark:text-indigo-400 shadow-md'
-                                : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                            ? 'bg-white dark:bg-gray-700 text-indigo-600 dark:text-indigo-400 shadow-md'
+                            : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                             }`}
                     >
                         중보 기도
