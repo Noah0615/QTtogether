@@ -11,12 +11,14 @@ import PrayerList from '@/components/PrayerList';
 import PrayerWriteModal from '@/components/PrayerWriteModal';
 import { HeartHandshake, Info } from 'lucide-react';
 import Link from 'next/link';
+import ServiceIntro from '@/components/ServiceIntro';
 
 interface HomeClientProps {
     verse: BibleVerse;
 }
 
 export default function HomeClient({ verse }: HomeClientProps) {
+    const [showIntro, setShowIntro] = useState(true);
     const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
     const [activeTab, setActiveTab] = useState<'qt' | 'prayer'>('qt');
@@ -37,6 +39,10 @@ export default function HomeClient({ verse }: HomeClientProps) {
         setEditingLog(undefined);
         setEditingContent(undefined);
     };
+
+    if (showIntro) {
+        return <ServiceIntro onStart={() => setShowIntro(false)} />;
+    }
 
     return (
         <main className="min-h-screen bg-[#faf9f6] dark:bg-gray-950 text-gray-900 dark:text-gray-100 relative selection:bg-amber-200 dark:selection:bg-amber-900 font-sans transition-colors duration-300">
