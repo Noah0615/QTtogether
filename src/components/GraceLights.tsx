@@ -7,22 +7,11 @@ interface PresenceState {
     [key: string]: any;
 }
 
-interface OrbStyle {
-    id: number;
-    width: number;
-    height: number;
-    left: number;
-    top: number;
-    duration: number;
-    delay: number;
-}
-
 export default function GraceLights() {
     const [onlineCount, setOnlineCount] = useState(1);
     const [showFlash, setShowFlash] = useState(false);
 
-    // Memoize orb styles to prevent jumping on re-renders
-    // We'll generate a pool of potential orbs and slice based on count
+    // 1. ORB LOGIC (Restored)
     const orbPool = useMemo(() => {
         return Array.from({ length: 50 }).map((_, i) => ({
             id: i,
@@ -36,29 +25,38 @@ export default function GraceLights() {
     }, []);
 
     const activeOrbs = useMemo(() => {
-        // Limit to max 30 to avoid clutter, but always show at least one (you)
         const count = Math.min(Math.max(onlineCount, 1), 30);
         return orbPool.slice(0, count);
     }, [onlineCount, orbPool]);
 
-    // Firefly particles for the flash effect
-    const fireflies = useMemo(() => {
-        return Array.from({ length: 20 }).map((_, i) => ({
+    // 2. CANDLE LOGIC
+    const candlePositions = useMemo(() => {
+        return Array.from({ length: 50 }).map((_, i) => ({
             id: i,
-            tx: (Math.random() - 0.5) * 100, // Translate X in vw units roughly
-            ty: (Math.random() - 0.5) * 100,
+            left: (i * 7) % 95 + Math.random() * 5,
+            scale: 0.8 + Math.random() * 0.4,
+            delay: Math.random() * 2,
+        }));
+    }, []);
+
+    const activeCandles = useMemo(() => {
+        const count = Math.min(Math.max(onlineCount, 1), 20);
+        return candlePositions.slice(0, count);
+    }, [onlineCount, candlePositions]);
+
+    // 3. FIREFLY LOGIC
+    const fireflies = useMemo(() => {
+        return Array.from({ length: 30 }).map((_, i) => ({
+            id: i,
+            tx: (Math.random() - 0.5) * 100,
+            ty: (Math.random() - 0.5) * 100 - 20,
             delay: Math.random() * 0.5,
         }));
     }, []);
 
     useEffect(() => {
-        // 1. Presence (User Count)
         const channel = supabase.channel('online-users', {
-            config: {
-                presence: {
-                    key: Math.random().toString(36).substring(7),
-                },
-            },
+            config: { presence: { key: Math.random().toString(36).substring(7) } },
         });
 
         channel
@@ -68,42 +66,31 @@ export default function GraceLights() {
                 console.log('Presence sync:', count);
                 setOnlineCount(count);
             })
-            .on('postgres_changes', {
-                event: 'INSERT',
-                schema: 'public',
-                table: 'qt_logs',
-            }, () => {
-                // 2. Flash Effect on New Post
-                console.log('New post detected, flashing lights');
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'qt_logs' }, () => {
                 triggerFlash();
             })
             .subscribe(async (status) => {
                 if (status === 'SUBSCRIBED') {
-                    await channel.track({
-                        online_at: new Date().toISOString(),
-                    });
+                    await channel.track({ online_at: new Date().toISOString() });
                 }
             });
 
-        return () => {
-            supabase.removeChannel(channel);
-        };
+        return () => { supabase.removeChannel(channel); };
     }, []);
 
     const triggerFlash = () => {
         setShowFlash(true);
-        setTimeout(() => setShowFlash(false), 3000); // Reset after animation
+        setTimeout(() => setShowFlash(false), 3000);
     };
 
     return (
-        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-            {/* Ambient Background Glow - subtle pulsing */}
-            {/* <div className="absolute inset-0 bg-gradient-to-t from-amber-50/20 to-transparent opacity-30 animate-pulse" style={{ animationDuration: '5s' }} /> */}
+        // Changed z-0 to z-50 to bring to front, keeping pointer-events-none to click through
+        <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
 
-            {/* Online User Orbs */}
+            {/* 1. ORBS (Floating Lights) */}
             {activeOrbs.map((orb) => (
                 <div
-                    key={orb.id}
+                    key={`orb-${orb.id}`}
                     className="absolute bg-amber-400 rounded-full blur-[2px] opacity-60 animate-float-orb"
                     style={{
                         width: `${orb.width}px`,
@@ -117,31 +104,64 @@ export default function GraceLights() {
                 />
             ))}
 
-            {/* Firefly Spread Effect (New Post) */}
+            {/* 2. CANDLES (Bottom) */}
+            <div className="absolute bottom-0 left-0 w-full h-32 flex items-end px-4 overflow-hidden mask-image-gradient">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/0 to-transparent pointer-events-none" />
+
+                {activeCandles.map((candle) => (
+                    <div
+                        key={`candle-${candle.id}`}
+                        className="absolute bottom-0 transition-all duration-1000 ease-out"
+                        style={{
+                            left: `${candle.left}%`,
+                            transform: `scale(${candle.scale})`,
+                            zIndex: Math.floor(candle.scale * 10),
+                        }}
+                    >
+                        <div className="relative flex flex-col items-center">
+                            {/* Flame */}
+                            <div
+                                className="w-4 h-6 bg-gradient-to-t from-orange-500 via-yellow-300 to-white rounded-[50%] blur-[1px] animate-flicker origin-bottom"
+                                style={{ animationDelay: `${candle.delay}s` }}
+                            >
+                                <div className="absolute inset-0 bg-yellow-400 opacity-50 blur-[6px] rounded-full animate-pulse" />
+                            </div>
+                            {/* Wick */}
+                            <div className="w-[2px] h-2 bg-black/60 -mt-1" />
+                            {/* Wax Body */}
+                            <div className="w-8 h-12 bg-gradient-to-b from-amber-100 to-amber-200 rounded-lg shadow-inner border border-amber-200/50" />
+                            {/* Reflection on floor */}
+                            <div className="w-20 h-4 bg-amber-500/20 blur-md rounded-full -mt-2" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* 3. FIREFLIES (Celebration) */}
             {showFlash && (
-                <div className="absolute inset-0 flex items-center justify-center z-50">
-                    <div className="w-full h-full absolute animate-flash-overlay bg-amber-100/30" />
+                <div className="absolute inset-0 flex items-center justify-center z-[60]">
+                    <div className="w-full h-full absolute animate-flash-overlay bg-amber-100/20" />
                     {fireflies.map((fly) => (
                         <div
                             key={`firefly-${fly.id}`}
-                            className="absolute w-1.5 h-1.5 bg-amber-300 rounded-full animate-firefly-spread shadow-[0_0_8px_rgba(252,211,77,0.8)]"
+                            className="absolute w-1.5 h-1.5 bg-amber-300 rounded-full animate-firefly-spread shadow-[0_0_10px_rgba(252,211,77,0.9)]"
                             style={{
                                 left: '50%',
-                                top: '50%',
+                                top: '60%',
                                 '--tx': `${fly.tx}vw`,
                                 '--ty': `${fly.ty}vh`,
                                 animationDelay: `${fly.delay}s`
                             } as React.CSSProperties}
                         />
                     ))}
-                    <div className="absolute text-amber-600 font-bold text-lg animate-fade-up opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
-                        누군가 은혜를 나누었습니다
+                    <div className="absolute top-1/3 w-full text-center text-amber-600/90 font-serif font-bold text-xl animate-fade-up opacity-0 drop-shadow-sm" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
+                        누군가 기도의 불을 밝혔습니다
                     </div>
                 </div>
             )}
 
             {/* Counter Text */}
-            <div className="absolute bottom-4 right-4 text-xs text-amber-800/40 font-serif italic select-none z-10">
+            <div className="absolute bottom-2 right-4 text-[10px] text-amber-900/50 font-serif italic select-none z-50">
                 {onlineCount > 1 ? `${onlineCount} lights shining` : '1 light shining'}
             </div>
         </div>
