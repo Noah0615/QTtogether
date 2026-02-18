@@ -7,6 +7,9 @@ import { PenTool } from 'lucide-react';
 import { BibleVerse } from '@/lib/getDailyVerse';
 import { QTLog } from '@/lib/supabase';
 import ThemeToggle from '@/components/ThemeToggle';
+import PrayerList from '@/components/PrayerList';
+import PrayerWriteModal from '@/components/PrayerWriteModal';
+import { HeartHandshake } from 'lucide-react';
 
 interface HomeClientProps {
     verse: BibleVerse;
@@ -15,6 +18,8 @@ interface HomeClientProps {
 export default function HomeClient({ verse }: HomeClientProps) {
     const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
+    const [activeTab, setActiveTab] = useState<'qt' | 'prayer'>('qt');
+    const [isPrayerModalOpen, setIsPrayerModalOpen] = useState(false);
 
     // Edit State
     const [editingLog, setEditingLog] = useState<QTLog | undefined>(undefined);
@@ -56,23 +61,60 @@ export default function HomeClient({ verse }: HomeClientProps) {
                     <VerseCard verse={verse} />
                 </div>
 
-                <div className="mb-20 animate-in slide-in-from-bottom-4 duration-700 delay-200 fade-in fill-mode-backwards">
+                {/* Tab Navigation */}
+                <div className="flex p-1 bg-gray-200/50 dark:bg-gray-800/50 rounded-full mb-8 animate-in slide-in-from-bottom-4 duration-700 delay-150 fade-in fill-mode-backwards w-full max-w-sm mx-auto backdrop-blur-sm">
                     <button
-                        onClick={() => {
-                            setEditingLog(undefined);
-                            setEditingContent(undefined);
-                            setIsWriteModalOpen(true);
-                        }}
-                        className="group relative inline-flex items-center justify-center px-8 py-4 bg-gray-900 text-white font-bold text-lg rounded-full hover:bg-gray-800 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95"
+                        onClick={() => setActiveTab('qt')}
+                        className={`flex-1 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${activeTab === 'qt'
+                                ? 'bg-white dark:bg-gray-700 text-amber-600 dark:text-amber-400 shadow-md'
+                                : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                            }`}
                     >
-                        <PenTool className="w-5 h-5 mr-3 group-hover:rotate-12 transition-transform duration-300 text-amber-400" />
-                        나만의 묵상 기록하기
-                        <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-400 opacity-20 blur group-hover:opacity-40 transition-opacity duration-500"></div>
+                        오늘의 묵상
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('prayer')}
+                        className={`flex-1 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${activeTab === 'prayer'
+                                ? 'bg-white dark:bg-gray-700 text-indigo-600 dark:text-indigo-400 shadow-md'
+                                : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                            }`}
+                    >
+                        중보 기도
                     </button>
                 </div>
 
+                <div className="mb-12 animate-in slide-in-from-bottom-4 duration-700 delay-200 fade-in fill-mode-backwards">
+                    {activeTab === 'qt' ? (
+                        <button
+                            onClick={() => {
+                                setEditingLog(undefined);
+                                setEditingContent(undefined);
+                                setIsWriteModalOpen(true);
+                            }}
+                            className="group relative inline-flex items-center justify-center px-8 py-4 bg-gray-900 text-white font-bold text-lg rounded-full hover:bg-gray-800 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95"
+                        >
+                            <PenTool className="w-5 h-5 mr-3 group-hover:rotate-12 transition-transform duration-300 text-amber-400" />
+                            나만의 묵상 기록하기
+                            <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-400 opacity-20 blur group-hover:opacity-40 transition-opacity duration-500"></div>
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => setIsPrayerModalOpen(true)}
+                            className="group relative inline-flex items-center justify-center px-8 py-4 bg-indigo-900 text-white font-bold text-lg rounded-full hover:bg-indigo-800 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 active:scale-95"
+                        >
+                            <HeartHandshake className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-300 text-indigo-300" />
+                            기도제목 나누기
+                            <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-indigo-400 to-purple-400 opacity-20 blur group-hover:opacity-40 transition-opacity duration-500"></div>
+                        </button>
+                    )}
+                </div>
+
                 <div className="w-full animate-in slide-in-from-bottom-4 duration-700 delay-300 fade-in fill-mode-backwards">
-                    <QTList key={refreshKey} onEditLog={handleEditLog} />
+                    {activeTab === 'qt' ? (
+                        <QTList key={`qt-${refreshKey}`} onEditLog={handleEditLog} />
+                    ) : (
+                        <PrayerList key={`prayer-${refreshKey}`} refreshTrigger={refreshKey} />
+                    )}
                 </div>
             </div>
 
@@ -83,6 +125,12 @@ export default function HomeClient({ verse }: HomeClientProps) {
                 onSuccess={() => setRefreshKey((prev) => prev + 1)}
                 initialData={editingLog}
                 initialContent={editingContent}
+            />
+
+            <PrayerWriteModal
+                isOpen={isPrayerModalOpen}
+                onClose={() => setIsPrayerModalOpen(false)}
+                onSuccess={() => setRefreshKey((prev) => prev + 1)}
             />
         </main>
     );
