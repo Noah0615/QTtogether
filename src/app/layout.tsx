@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Providers } from "./providers";
 import "./globals.css";
+import GraceLights from "@/components/GraceLights";
 
 export const metadata: Metadata = {
   title: "QT Together - Anonymous Devotional Space",
@@ -16,6 +17,7 @@ export default function RootLayout({
     <html lang="ko" suppressHydrationWarning>
       <body className="antialiased font-sans">
         <Providers>
+          <GraceLights />
           {children}
         </Providers>
       </body>
