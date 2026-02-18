@@ -28,8 +28,8 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
         }
 
-        if (password.length !== 4) {
-            return NextResponse.json({ error: 'Password must be 4 digits' }, { status: 400 });
+        if (password.length < 4) {
+            return NextResponse.json({ error: 'Password must be at least 4 characters' }, { status: 400 });
         }
 
         // Hash password

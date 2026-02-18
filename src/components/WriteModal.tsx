@@ -205,16 +205,15 @@ export default function WriteModal({ isOpen, onClose, verse, onSuccess, initialD
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">비밀번호 (4자리)</label>
+                            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">비밀번호</label>
                             <input
                                 type="password"
                                 required
-                                maxLength={4}
+                                minLength={4}
                                 value={password}
-                                onChange={(e) => setPassword(e.target.value.replace(/[^0-9]/g, ''))}
-                                className="w-full p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all tracking-widest dark:text-gray-100"
-                                placeholder="••••"
-                                inputMode="numeric"
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all tracking-widest dark:text-gray-100 placeholder-gray-400"
+                                placeholder="4자 이상"
                             />
                         </div>
                     </div>

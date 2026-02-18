@@ -29,9 +29,9 @@ export async function POST(request: Request) {
         const { nickname, password, content, is_public, bible_verse, media_url } = body;
 
         // Validation
-        if (!nickname || !password || !content || password.length !== 4) {
+        if (!nickname || !password || !content || password.length < 4) {
             return NextResponse.json(
-                { error: 'Missing required fields or invalid password length' },
+                { error: 'Missing required fields or password too short (min 4 chars)' },
                 { status: 400 }
             );
         }

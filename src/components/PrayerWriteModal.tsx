@@ -72,16 +72,15 @@ export default function PrayerWriteModal({ isOpen, onClose, onSuccess }: PrayerW
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">비밀번호 (4자리)</label>
+                            <label className="block text-sm font-bold text-gray-700 mb-2">비밀번호</label>
                             <input
                                 type="password"
                                 required
-                                maxLength={4}
+                                minLength={4}
                                 value={password}
-                                onChange={(e) => setPassword(e.target.value.replace(/[^0-9]/g, ''))}
+                                onChange={(e) => setPassword(e.target.value)}
                                 className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all tracking-widest text-gray-900 placeholder-gray-400"
-                                placeholder="••••"
-                                inputMode="numeric"
+                                placeholder="4자 이상"
                             />
                         </div>
                     </div>
