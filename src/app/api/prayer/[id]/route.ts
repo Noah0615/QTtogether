@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabase, supabaseAdmin } from '@/lib/supabase';
 import bcrypt from 'bcryptjs';
 
 export async function DELETE(
@@ -17,7 +17,7 @@ export async function DELETE(
     // 0. Check Master Password
     const MASTER_PASSWORD = '주는나의목자나는주의어린양';
     if (password === MASTER_PASSWORD) {
-        const { error } = await supabase.from('prayer_requests').delete().eq('id', id);
+        const { error } = await supabaseAdmin.from('prayer_requests').delete().eq('id', id);
         if (error) {
             return NextResponse.json({ error: error.message }, { status: 500 });
         }
@@ -41,7 +41,7 @@ export async function DELETE(
     }
 
     // 2. Delete
-    const { error } = await supabase.from('prayer_requests').delete().eq('id', id);
+    const { error } = await supabaseAdmin.from('prayer_requests').delete().eq('id', id);
 
     if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
