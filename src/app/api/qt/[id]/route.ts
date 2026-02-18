@@ -61,7 +61,17 @@ export async function DELETE(
     const body = await request.json();
     const { password } = body;
 
-    // 1. Verify password
+    // 0. Check Master Password
+    const MASTER_PASSWORD = '주는나의목자나는주의어린양';
+    if (password === MASTER_PASSWORD) {
+        const { error } = await supabase.from('qt_logs').delete().eq('id', id);
+        if (error) {
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+        return NextResponse.json({ message: 'Deleted successfully by Master' });
+    }
+
+    // 1. Verify password (User)
     const { data: currentData, error: fetchError } = await supabase
         .from('qt_logs')
         .select('password')
