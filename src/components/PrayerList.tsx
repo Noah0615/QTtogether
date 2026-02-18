@@ -154,8 +154,6 @@ export default function PrayerList({ refreshTrigger }: { refreshTrigger: number 
                     </div>
                 ))
             )}
-            ))
-            )}
 
             <PasswordModal
                 isOpen={isPasswordModalOpen}
