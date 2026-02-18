@@ -67,7 +67,7 @@ export default function PrayerWriteModal({ isOpen, onClose, onSuccess }: PrayerW
                                 required
                                 value={nickname}
                                 onChange={(e) => setNickname(e.target.value)}
-                                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-gray-900 placeholder-gray-400"
                                 placeholder="Name"
                             />
                         </div>
@@ -79,7 +79,7 @@ export default function PrayerWriteModal({ isOpen, onClose, onSuccess }: PrayerW
                                 maxLength={4}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value.replace(/[^0-9]/g, ''))}
-                                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all tracking-widest"
+                                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all tracking-widest text-gray-900 placeholder-gray-400"
                                 placeholder="••••"
                                 inputMode="numeric"
                             />
@@ -92,7 +92,7 @@ export default function PrayerWriteModal({ isOpen, onClose, onSuccess }: PrayerW
                             required
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
-                            className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl h-40 resize-none focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all leading-relaxed placeholder-gray-400"
+                            className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl h-40 resize-none focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all leading-relaxed placeholder-gray-400 text-gray-900"
                             placeholder="함께 기도하고 싶은 내용을 적어주세요..."
                         />
                     </div>
