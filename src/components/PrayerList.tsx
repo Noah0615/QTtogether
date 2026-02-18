@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Heart, MessageCircle } from 'lucide-react';
+import { Heart, MessageCircle, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import PasswordModal from './PasswordModal';
 
 interface PrayerRequest {
     id: string;
@@ -19,6 +20,11 @@ export default function PrayerList({ refreshTrigger }: { refreshTrigger: number 
     const [prayers, setPrayers] = useState<PrayerRequest[]>([]);
     const [loading, setLoading] = useState(true);
     const [prayedIds, setPrayedIds] = useState<Set<string>>(new Set());
+
+    // Delete state
+    const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+    const [selectedPrayerId, setSelectedPrayerId] = useState<string | null>(null);
+    const [verifying, setVerifying] = useState(false);
 
     useEffect(() => {
         fetchPrayers();
@@ -50,6 +56,38 @@ export default function PrayerList({ refreshTrigger }: { refreshTrigger: number 
         }
     };
 
+    const handleDeleteClick = (id: string) => {
+        setSelectedPrayerId(id);
+        setIsPasswordModalOpen(true);
+    };
+
+    const handlePasswordSubmit = async (password: string) => {
+        if (!selectedPrayerId) return;
+
+        setVerifying(true);
+        try {
+            const res = await fetch(`/api/prayer/${selectedPrayerId}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password }),
+            });
+
+            if (res.ok) {
+                alert('삭제되었습니다.');
+                setIsPasswordModalOpen(false);
+                setSelectedPrayerId(null);
+                fetchPrayers(); // Refetch list
+            } else {
+                const data = await res.json();
+                alert(data.error || '비밀번호가 일치하지 않습니다.');
+            }
+        } catch (err) {
+            alert('오류가 발생했습니다.');
+        } finally {
+            setVerifying(false);
+        }
+    };
+
     if (loading && prayers.length === 0) {
         return <div className="text-center py-20 text-gray-500">기도제목을 불러오는 중...</div>;
     }
@@ -77,6 +115,13 @@ export default function PrayerList({ refreshTrigger }: { refreshTrigger: number 
                             <span className="text-xs text-gray-400 font-medium">
                                 {formatDistanceToNow(new Date(prayer.created_at), { addSuffix: true, locale: ko })}
                             </span>
+                            <button
+                                onClick={() => handleDeleteClick(prayer.id)}
+                                className="ml-2 text-gray-300 hover:text-red-400 transition-colors"
+                                title="삭제"
+                            >
+                                <Trash2 size={16} />
+                            </button>
                         </div>
 
                         <p className="text-gray-800 dark:text-gray-300 leading-relaxed whitespace-pre-wrap mb-6 text-[15px]">
@@ -88,8 +133,8 @@ export default function PrayerList({ refreshTrigger }: { refreshTrigger: number 
                                 onClick={() => handleAmen(prayer.id)}
                                 disabled={prayedIds.has(prayer.id)}
                                 className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${prayedIds.has(prayer.id)
-                                        ? 'bg-indigo-100 text-indigo-600 cursor-default'
-                                        : 'bg-gray-50 text-gray-500 hover:bg-indigo-50 hover:text-indigo-600'
+                                    ? 'bg-indigo-100 text-indigo-600 cursor-default'
+                                    : 'bg-gray-50 text-gray-500 hover:bg-indigo-50 hover:text-indigo-600'
                                     }`}
                             >
                                 <Heart
@@ -109,6 +154,16 @@ export default function PrayerList({ refreshTrigger }: { refreshTrigger: number 
                     </div>
                 ))
             )}
+            ))
+            )}
+
+            <PasswordModal
+                isOpen={isPasswordModalOpen}
+                onClose={() => setIsPasswordModalOpen(false)}
+                onSubmit={handlePasswordSubmit}
+                loading={verifying}
+                title="기도제목 삭제"
+            />
         </div>
     );
 }
